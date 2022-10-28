@@ -4,7 +4,7 @@ metadata:
   name: essentials
   namespace: fleet-default
 spec:
-  repo: https://github.com/bcdurden/demo-multicloud.git
+  repo: https://github.com/bcdurden/multicloud-rancher-demo.git
   branch: main
 
   # To target specific clusters, uncomment this block

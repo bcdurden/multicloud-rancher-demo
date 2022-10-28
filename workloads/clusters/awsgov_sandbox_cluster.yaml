@@ -4,7 +4,7 @@ metadata:
   name: awsgov-sandbox-cluster-loader
   namespace: fleet-local
 spec:
-  repo: https://github.com/bcdurden/demo-multicloud.git
+  repo: https://github.com/bcdurden/multicloud-rancher-demo.git
   branch: main  
   targets:
   - clusterName: local
