@@ -1,0 +1,105 @@
+#@ load("@ytt:data", "data")
+---
+cloudprovider: #@ data.values.cloud_provider
+cloudCredentialSecretName: #@ data.values.cloud_secret_name
+cluster:
+  annotations: #@ data.values.cluster_annotations
+  labels: #@ data.values.cluster_labels
+  name: #@ data.values.cluster_name
+
+kubernetesVersion: #@ data.values.k8s_version
+monitoring:
+  enabled: false
+rke:
+  localClusterAuthEndpoint:
+    enabled: false
+
+nodepools:
+#@ az_range = ["a", "b", "c"]
+#@ for i in range(data.values.controlplane.node_count):
+- etcd: true
+  controlplane: true
+  worker: false
+  displayName: #@ "control-plane-" + az_range[i]
+
+  labels: #@ data.values.controlplane.labels
+  taints: #@ data.values.controlplane.taints
+  quantity: 1
+  paused: false
+  name: #@ "control-plane-" + data.values.cluster_short_name + "-" + az_range[i]
+
+  ami: #@ data.values.node_ami_id
+  deviceName: "/dev/sda1"
+  encryptEbsVolume: false
+  endpoint: ""
+  iamInstanceProfile: #@ data.values.controlplane.node_iam_role
+  insecureTransport: false
+  instanceType: #@ data.values.controlplane.instance_type
+  region: #@ data.values.region
+  createSecurityGroup: #@ data.values.controlplane.create_security_groups
+  securityGroups: #@ data.values.controlplane.security_groups
+
+  keypairName: ""
+  securityGroupReadonly: false
+  sshKeyContents: ""
+  subnetId: #@ data.values.subnet_ids[i]
+  monitoring: false
+  openPort: #@ data.values.controlplane.ports
+  privateAddressOnly: #@ data.values.controlplane.use_private_address_only
+  requestSpotInstance: false
+  tags: #@ data.values.controlplane.tags
+  retries: #@ data.values.controlplane.failure_retry_count
+  rootSize: #@ data.values.controlplane.disk_size_gb
+  sshUser: #@ data.values.controlplane.ssh_user
+  volumeType: #@ data.values.controlplane.volume_type
+  vpcId: #@ data.values.vpc_id
+  useEbsOptimizedInstance: false
+  usePrivateAddress: #@ data.values.controlplane.use_private_address
+  userdata: #@ data.values.controlplane.userdata
+  zone: #@ az_range[i]
+
+#@ end
+
+#@ for i in range(len(az_range)):
+- etcd: false
+  controlplane: false
+  worker: true
+  displayName: #@ "worker-" + az_range[i]
+
+  labels: #@ data.values.workers.labels
+  taints: #@ data.values.workers.taints
+
+  quantity: #@ data.values.workers.node_count // len(az_range)
+  paused: false
+  name: #@ "worker-" + data.values.cluster_short_name + "-" + az_range[i]
+
+  ami: #@ data.values.node_ami_id
+  deviceName: "/dev/sda1"
+  encryptEbsVolume: false
+  endpoint: ""
+  iamInstanceProfile: #@ data.values.workers.node_iam_role
+  insecureTransport: false
+  instanceType: #@ data.values.workers.instance_type
+  region: #@ data.values.region
+  createSecurityGroup: #@ data.values.workers.create_security_groups
+  securityGroups: #@ data.values.workers.security_groups
+
+  keypairName: ""
+  securityGroupReadonly: false
+  sshKeyContents: ""
+  subnetId: #@ data.values.subnet_ids[i]
+  monitoring: false
+  openPort: #@ data.values.workers.ports
+  privateAddressOnly: #@ data.values.workers.use_private_address_only
+  requestSpotInstance: false
+  tags: #@ data.values.workers.tags
+  retries: #@ data.values.workers.failure_retry_count
+  rootSize: #@ data.values.workers.disk_size_gb
+  sshUser: #@ data.values.workers.ssh_user
+  volumeType: #@ data.values.workers.volume_type
+  vpcId: #@ data.values.vpc_id
+  useEbsOptimizedInstance: false
+  usePrivateAddress: #@ data.values.workers.use_private_address
+  userdata: #@ data.values.workers.userdata
+  zone: #@ az_range[i]
+#@ end

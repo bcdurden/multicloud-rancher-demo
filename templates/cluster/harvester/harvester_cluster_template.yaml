@@ -1,0 +1,58 @@
+#@ load("@ytt:data", "data")
+---
+cloudprovider: #@ data.values.cloud_provider
+cloudCredentialSecretName: #@ data.values.cloud_secret_name
+cluster:
+  annotations: #@ data.values.cluster_annotations
+  labels: #@ data.values.cluster_labels
+  name: #@ data.values.cluter_name
+
+kubernetesVersion: #@ data.values.k8s_version
+monitoring:
+  enabled: false
+rke:
+  localClusterAuthEndpoint:
+    enabled: false
+
+nodepools:
+- etcd: true
+  controlplane: true
+  worker: false
+  displayName: control-plane-nodes
+  name: #@ "control-plane-" + data.values.cluster_short_name
+
+  labels: #@ data.values.controlplane.labels
+  taints: #@ data.values.controlplane.taints
+  quantity: #@ data.values.controlplane.node_count
+  paused: false
+
+  diskSize: #@ data.values.controlplane.disk_size_gb
+  diskBus: virtio
+  cpuCount: #@ data.values.controlplane.cpu_count
+  memorySize: #@ data.values.controlplane.memory_size_gb
+  networkName: #@ data.values.network_name
+  networkType: dhcp
+  imageName: #@ data.values.node_image_name
+  vmNamespace: #@ data.values.cluster_namespace
+  sshUser: #@ data.values.controlplane.ssh_user
+
+- etcd: false
+  controlplane: false
+  worker: true
+  displayName: "worker-nodes"
+  name: #@ "worker-" + data.values.cluster_short_name
+
+  labels: #@ data.values.workers.labels
+  taints: #@ data.values.workers.taints
+  quantity: #@ data.values.workers.node_count
+  paused: false
+
+  diskSize: #@ data.values.workers.disk_size_gb
+  diskBus: virtio
+  cpuCount: #@ data.values.workers.cpu_count
+  memorySize: #@ data.values.workers.memory_size_gb
+  networkName: #@ data.values.network_name
+  networkType: dhcp
+  imageName: #@ data.values.node_image_name
+  vmNamespace: #@ data.values.cluster_namespace
+  sshUser: #@ data.values.workers.ssh_user

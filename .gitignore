@@ -1,0 +1,7 @@
+*.tfvars
+*.tfstate*
+*.terraform
+*.terraform*
+kube_config_server.yaml
+id_rsa*
+kube.yaml
