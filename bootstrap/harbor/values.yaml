@@ -1,0 +1,34 @@
+externalURL: https://harbor.sienarfleet.systems
+
+harborAdminPassword: "8#&pG8a522x1C&1D%#u" # "Harbor12345"
+
+updateStrategy:
+  type: Recreate
+
+expose:
+  ingress:
+    hosts:
+      core: harbor.sienarfleet.systems
+      notary: notary.sienarfleet.systems
+  tls:
+    certSource: secret
+    secret:
+      secretName: harbor-prod-homelab-certificate
+      notarySecretName: harbor-prod-homelab-certificate
+
+persistence:
+  persistentVolumeClaim:
+    registry:
+      size: 65Gi
+      storageClass: "longhorn"
+    chartmuseum:
+      storageClass: "longhorn"
+    jobservice:
+      storageClass: "longhorn"
+    database:
+      storageClass: "longhorn"
+    redis:
+      storageClass: "longhorn"
+    trivy:
+      storageClass: "longhorn"
+

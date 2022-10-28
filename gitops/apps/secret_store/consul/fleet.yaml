@@ -1,0 +1,8 @@
+defaultNamespace: vault
+helm:
+  repo: https://helm.releases.hashicorp.com
+  chart: consul
+  version: 0.39.0
+  releaseName: consul
+  valuesFiles:
+    - values.yaml

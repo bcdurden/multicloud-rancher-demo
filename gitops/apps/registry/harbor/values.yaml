@@ -1,0 +1,77 @@
+externalURL: https://harbor.svc.sienarfleet.systems
+
+harborAdminPassword: "Harbor12345"
+
+updateStrategy:
+  type: Recreate
+
+expose:
+  ingress:
+    hosts:
+      core: harbor.svc.sienarfleet.systems
+      notary: notary.svc.sienarfleet.systems
+
+persistence:
+  persistentVolumeClaim:
+    registry:
+      size: 5Gi
+      storageClass: "longhorn"
+    chartmuseum:
+      storageClass: "longhorn"
+    jobservice:
+      storageClass: "longhorn"
+    database:
+      storageClass: "longhorn"
+    redis:
+      storageClass: "longhorn"
+    trivy:
+      storageClass: "longhorn"
+# portal:
+#   image:
+#     repository: harbor.sienarfleet.systems/goharbor/harbor-portal
+#     tag: v2.5.3
+# core:
+#   image:
+#     repository: harbor.sienarfleet.systems/goharbor/harbor-core
+#     tag: v2.5.3
+# jobservice:
+#   image:
+#     repository: harbor.sienarfleet.systems/goharbor/harbor-jobservice
+#     tag: v2.5.3
+# registry:
+#   registry:
+#     image:
+#       repository: harbor.sienarfleet.systems/goharbor/registry-photon
+#       tag: v2.5.3
+#   controller:
+#     image:
+#       repository: harbor.sienarfleet.systems/goharbor/harbor-registryctl
+#       tag: v2.5.3
+# chartmuseum:
+#   image:
+#     repository: harbor.sienarfleet.systems/goharbor/chartmuseum-photon
+#     tag: v2.5.3
+# trivy:
+#   image:
+#     repository: harbor.sienarfleet.systems/goharbor/trivy-adapter-photon
+#     tag: v2.5.3
+# notary:
+#   server:
+#     image:
+#       repository: harbor.sienarfleet.systems/goharbor/notary-server-photon
+#       tag: v2.5.3
+#   signer:
+#     image:
+#       repository: harbor.sienarfleet.systems/goharbor/notary-signer-photon
+#       tag: v2.5.3
+# database:
+#   internal:
+#     image:
+#       repository: harbor.sienarfleet.systems/goharbor/harbor-db
+#       tag: v2.5.3
+# redis:
+#   internal:
+#     image:
+#       repository: harbor.sienarfleet.systems/goharbor/redis-photon
+#       tag: v2.5.3
+

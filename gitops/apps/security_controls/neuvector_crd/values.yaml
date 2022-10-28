@@ -1,0 +1,15 @@
+crdwebhook:
+  enabled: true
+  type: ClusterIP
+openshift: false
+serviceAccount: neuvector
+global:
+  cattle:
+    # clusterId: c-m-sh94nccc
+    clusterName: shared-services
+    rkePathPrefix: ''
+    rkeWindowsPathPrefix: ''
+    # systemDefaultRegistry: harbor.sienarfleet.systems
+    # systemProjectId: p-6p6l4
+    url: https://rancher.homelab.platformfeverdream.io
+  # systemDefaultRegistry: harbor.sienarfleet.systems

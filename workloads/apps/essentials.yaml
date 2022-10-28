@@ -1,0 +1,25 @@
+kind: GitRepo
+apiVersion: fleet.cattle.io/v1alpha1
+metadata:
+  name: essentials
+  namespace: fleet-default
+spec:
+  repo: https://github.com/bcdurden/demo-multicloud.git
+  branch: main
+
+  # To target specific clusters, uncomment this block
+  # targets:
+  # - name: example
+  #   clusterSelector:
+  #     matchLabels:
+  #       cluster: example  
+  targets:
+  - clusterSelector:
+      matchExpressions:
+      - key: provider.cattle.io
+        operator: NotIn
+        values:
+        - harvester
+
+  paths:
+  - "./gitops/apps/essentials"

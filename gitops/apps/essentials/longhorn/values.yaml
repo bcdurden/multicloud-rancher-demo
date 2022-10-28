@@ -1,0 +1,126 @@
+annotations: {}
+csi:
+  attacherReplicaCount: null
+  kubeletRootDir: null
+  provisionerReplicaCount: null
+  resizerReplicaCount: null
+  snapshotterReplicaCount: null
+defaultSettings:
+  allowNodeDrainWithLastHealthyReplica: null
+  allowRecurringJobWhileVolumeDetached: null
+  allowVolumeCreationWithDegradedAvailability: null
+  autoCleanupSystemGeneratedSnapshot: null
+  autoDeletePodWhenVolumeDetachedUnexpectedly: null
+  autoSalvage: null
+  backingImageCleanupWaitInterval: null
+  backingImageRecoveryWaitInterval: null
+  backupTarget: null
+  backupTargetCredentialSecret: null
+  backupstorePollInterval: null
+  concurrentAutomaticEngineUpgradePerNodeLimit: null
+  concurrentReplicaRebuildPerNodeLimit: null
+  createDefaultDiskLabeledNodes: null
+  defaultDataLocality: null
+  defaultDataPath: null
+  defaultLonghornStaticStorageClass: null
+  defaultReplicaCount: null
+  disableReplicaRebuild: null
+  disableRevisionCounter: null
+  disableSchedulingOnCordonedNode: null
+  guaranteedEngineManagerCPU: 2
+  guaranteedReplicaManagerCPU: 2
+  kubernetesClusterAutoscalerEnabled: null
+  mkfsExt4Parameters: null
+  nodeDownPodDeletionPolicy: null
+  orphanAutoDeletion: null
+  priorityClass: null
+  replicaAutoBalance: null
+  replicaReplenishmentWaitInterval: null
+  replicaSoftAntiAffinity: null
+  replicaZoneSoftAntiAffinity: null
+  storageMinimalAvailablePercentage: null
+  storageNetwork: null
+  storageOverProvisioningPercentage: null
+  systemManagedComponentsNodeSelector: null
+  systemManagedPodsImagePullPolicy: null
+  taintToleration: null
+  upgradeChecker: null
+enablePSP: true
+global:
+  cattle:
+    systemDefaultRegistry: ''
+    windowsCluster:
+      defaultSetting:
+        systemManagedComponentsNodeSelector: kubernetes.io/os:linux
+        taintToleration: cattle.io/os=linux:NoSchedule
+      enabled: false
+      nodeSelector:
+        kubernetes.io/os: linux
+      tolerations:
+        - effect: NoSchedule
+          key: cattle.io/os
+          operator: Equal
+          value: linux
+ingress:
+  annotations: null
+  enabled: false
+  host: sslip.io
+  ingressClassName: null
+  path: /
+  secrets: null
+  secureBackends: false
+  tls: false
+  tlsSecret: longhorn.local-tls
+longhornDriver:
+  nodeSelector: {}
+  priorityClass: null
+  tolerations: null
+longhornManager:
+  log:
+    format: plain
+  nodeSelector: {}
+  priorityClass: null
+  serviceAnnotations: {}
+  tolerations: null
+longhornUI:
+  nodeSelector: {}
+  priorityClass: null
+  replicas: 1
+  tolerations: null
+namespaceOverride: ''
+persistence:
+  backingImage:
+    dataSourceParameters: null
+    dataSourceType: null
+    enable: false
+    expectedChecksum: null
+    name: null
+  defaultClass: true
+  defaultClassReplicaCount: 3
+  defaultDataLocality: disabled
+  defaultFsType: ext4
+  migratable: false
+  reclaimPolicy: Delete
+  recurringJobSelector:
+    enable: false
+    jobList: null
+privateRegistry:
+  createSecret: null
+  registryPasswd: null
+  registrySecret: null
+  registryUrl: null
+  registryUser: null
+resources: {}
+service:
+  manager:
+    loadBalancerIP: ''
+    loadBalancerSourceRanges: ''
+    nodePort: ''
+    type: ClusterIP
+  ui:
+    nodePort: null
+    type: ClusterIP
+serviceAccount:
+  annotations: {}
+longhorn:
+  default_setting: false

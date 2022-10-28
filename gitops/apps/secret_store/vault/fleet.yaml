@@ -1,0 +1,11 @@
+defaultNamespace: vault
+helm:
+  repo: https://helm.releases.hashicorp.com
+  chart: vault
+  version: 0.22.0
+  releaseName: vault
+  valuesFiles:
+    - values.yaml
+
+dependsOn:
+- name: secret-store-gitops-apps-secret-store-consul

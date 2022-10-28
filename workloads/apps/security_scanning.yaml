@@ -1,0 +1,20 @@
+kind: GitRepo
+apiVersion: fleet.cattle.io/v1alpha1
+metadata:
+  name: security-controls
+  namespace: fleet-default
+spec:
+  repo: https://github.com/bcdurden/demo-multicloud.git
+  branch: main
+
+  targets:
+  - clusterSelector:
+      matchLabels:
+        environment: prod
+  - clusterSelector:
+      matchLabels:
+        environment: shared
+
+  paths:
+  - "./gitops/apps/security_controls"
+  
