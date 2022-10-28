@@ -29,11 +29,6 @@ check-tools: ## Check to make sure you have the right tools
 # certificate targets
 certs: check-tools # needs CLOUDFLARE_TOKEN set and HARVESTER_CONTEXT for non-default contexts
 	@printf "\n===>Making Certificates\n";
-	@kubectx $(HARVESTER_CONTEXT)
-	@helm upgrade --install cert-manager ${BOOTSTRAP_DIR}/certs/cert-manager-v1.7.3.tgz \
-    --namespace cert-manager \
-	--create-namespace \
-	--set installCRDs=true || true
 	@kubectl create secret generic clouddns-dns01-solver-svc-acct -n cert-manager --from-file=$(CLOUD_TOKEN_FILE) --dry-run=client -o yaml | kubectl apply -f -
 	@kubectl apply -f $(BOOTSTRAP_DIR)/certs/issuer-prod-clouddns.yaml --dry-run=client -o yaml | kubectl apply -f -
 	@kubectl create ns harbor --dry-run=client -o yaml | kubectl apply -f -

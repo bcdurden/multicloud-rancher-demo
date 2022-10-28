@@ -77,10 +77,10 @@ controller:
         termination: passthrough
         tls: null
       type: null
-  image:
-    hash: null
-    repository: rancher/mirrored-neuvector-controller
-    tag: 5.0.2
+  # image:
+  #   hash: null
+  #   repository: rancher/mirrored-neuvector-controller
+  #   tag: 5.0.2
   ingress:
     annotations:
       nginx.ingress.kubernetes.io/backend-protocol: HTTPS
@@ -140,10 +140,10 @@ cve:
     tolerations: null
   updater:
     enabled: true
-    image:
-      hash: null
-      repository: rancher/mirrored-neuvector-updater
-      tag: latest
+    # image:
+    #   hash: null
+    #   repository: rancher/mirrored-neuvector-updater
+    #   tag: latest
     priorityClassName: null
     runAsUser: null
     schedule: 0 0 * * *
@@ -153,10 +153,10 @@ docker:
   enabled: false
 enforcer:
   enabled: true
-  image:
-    hash: null
-    repository: rancher/mirrored-neuvector-enforcer
-    tag: 5.0.2
+  # image:
+  #   hash: null
+  #   repository: rancher/mirrored-neuvector-enforcer
+  #   tag: 5.0.2
   priorityClassName: null
   resources: {}
   tolerations:
@@ -174,10 +174,10 @@ manager:
   enabled: true
   env:
     ssl: true
-  image:
-    hash: null
-    repository: rancher/mirrored-neuvector-manager
-    tag: 5.0.2
+  # image:
+  #   hash: null
+  #   repository: rancher/mirrored-neuvector-manager
+  #   tag: 5.0.2
   ingress:
     annotations:
       nginx.ingress.kubernetes.io/backend-protocol: HTTPS
@@ -210,11 +210,10 @@ resources: {}
 serviceAccount: neuvector
 global:
   cattle:
-    clusterId: c-m-dp495rtm
+    # clusterId: c-m-dp495rtm
     clusterName: services-shared
     rkePathPrefix: ''
     rkeWindowsPathPrefix: ''
     # systemDefaultRegistry: 
-    systemProjectId: p-sr28m
-    url: https://rancher.homelab.platformfeverdream.io
-  # systemDefaultRegistry: harbor.mustafar.lol
+    # systemProjectId: p-sr28m
+    url: https://rancher.sienarfleet.systems
