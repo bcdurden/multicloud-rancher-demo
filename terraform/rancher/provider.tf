@@ -18,6 +18,11 @@ terraform {
       version = "1.2.0"
     }
   }
+  backend "s3" {
+    bucket = "multicloud-brian-bucket"
+    key    = "terraform-backend/state"
+    region = "us-gov-west-1"
+  }
 }
 
 provider "helm" {
