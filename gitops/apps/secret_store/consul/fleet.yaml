@@ -6,3 +6,5 @@ helm:
   releaseName: consul
   valuesFiles:
     - values.yaml
+dependsOn:
+- name: essentials-gitops-apps-essentials-longhorn

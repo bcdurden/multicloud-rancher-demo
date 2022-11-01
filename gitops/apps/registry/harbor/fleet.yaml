@@ -6,3 +6,5 @@ helm:
   releaseName: harbor
   valuesFiles:
     - values.yaml
+dependsOn:
+- name: essentials-gitops-apps-essentials-longhorn
