@@ -301,10 +301,10 @@ global:
     windows:
       enabled: false
   imagePullSecrets: []
-  # kubectl:
-  #   pullPolicy: IfNotPresent
-  #   repository: rancher/kubectl
-  #   tag: v1.20.2
+  kubectl:
+    pullPolicy: IfNotPresent
+    repository: rancher/kubectl
+    tag: v1.20.2
   rbac:
     create: true
     pspAnnotations: {}
@@ -382,10 +382,9 @@ grafana:
     path: /
     tls: []
   namespaceOverride: ''
-  # proxy:
-  #   image:
-  #     repository: rancher/mirrored-library-nginx
-  #     tag: 1.21.1-alpine
+  proxy:
+    image:
+      repository: rancher/mirrored-library-nginx
   resources:
     limits:
       cpu: 200m
@@ -862,7 +861,7 @@ prometheus:
     image:
       repository: rancher/mirrored-prometheus-prometheus
       sha: ''
-      tag: v2.28.1
+      # tag: v2.28.1
     initContainers: []
     listenLocal: false
     logFormat: logfmt
@@ -885,9 +884,9 @@ prometheus:
     prometheusExternalLabelName: ''
     prometheusExternalLabelNameClear: false
     prometheusRulesExcludedFromEnforce: []
-    # proxy:
-    #   image:
-    #     repository: rancher/mirrored-library-nginx
+    proxy:
+      image:
+        repository: rancher/mirrored-library-nginx
     #     tag: 1.21.1-alpine
     query: {}
     queryLogFile: false
@@ -1050,10 +1049,10 @@ prometheusOperator:
     patch:
       affinity: {}
       enabled: true
-      # image:
-        # pullPolicy: IfNotPresent
-        # repository: rancher/mirrored-ingress-nginx-kube-webhook-certgen
-        # sha: ''
+      image:
+        pullPolicy: IfNotPresent
+        repository: rancher/mirrored-ingress-nginx-kube-webhook-certgen
+        sha: ''
         # tag: v1.0
       nodeSelector: {}
       podAnnotations: {}
@@ -1072,11 +1071,11 @@ prometheusOperator:
   dnsConfig: {}
   enabled: true
   hostNetwork: false
-  # image:
-  #   pullPolicy: IfNotPresent
-  #   repository: rancher/mirrored-prometheus-operator-prometheus-operator
-  #   sha: ''
-  #   tag: v0.50.0
+  image:
+    pullPolicy: IfNotPresent
+    repository: rancher/mirrored-prometheus-operator-prometheus-operator
+    sha: ''
+    # tag: v0.50.0
   kubeletService:
     enabled: true
     namespace: kube-system
@@ -1084,9 +1083,9 @@ prometheusOperator:
   nodeSelector: {}
   podAnnotations: {}
   podLabels: {}
-  # prometheusConfigReloaderImage:
-    # repository: rancher/mirrored-prometheus-operator-prometheus-config-reloader
-    # sha: ''
+  prometheusConfigReloaderImage:
+    repository: rancher/mirrored-prometheus-operator-prometheus-config-reloader
+    sha: ''
     # tag: v0.50.0
   prometheusInstanceNamespaces: []
   resources:
@@ -1122,10 +1121,10 @@ prometheusOperator:
     relabelings: []
     scrapeTimeout: ''
     selfMonitor: true
-  # thanosImage:
-  #   repository: rancher/mirrored-thanos-thanos
-  #   sha: ''
-  #   tag: v0.17.2
+  thanosImage:
+    repository: rancher/mirrored-thanos-thanos
+    sha: ''
+    # tag: v0.17.2
   thanosRulerInstanceNamespaces: []
   tls:
     enabled: true
