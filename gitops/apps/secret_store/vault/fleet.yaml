@@ -7,5 +7,5 @@ helm:
   valuesFiles:
     - values.yaml
 
-dependsOn:
-- name: secret-store-gitops-apps-secret-store-consul
+# dependsOn:
+# - name: secret-store-gitops-apps-secret-store-consul
