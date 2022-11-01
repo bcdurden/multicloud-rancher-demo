@@ -1050,7 +1050,7 @@ prometheusOperator:
     patch:
       affinity: {}
       enabled: true
-      image:
+      # image:
         # pullPolicy: IfNotPresent
         # repository: rancher/mirrored-ingress-nginx-kube-webhook-certgen
         # sha: ''
