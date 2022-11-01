@@ -81,7 +81,7 @@ nodepools:
   - "8080"
   - "8443"
   - "443"
-  privateAddressOnly: true
+  privateAddressOnly: false
   requestSpotInstance: false
   tags: owner,brian,KeepRunning,true
   retries: 5
@@ -121,7 +121,7 @@ nodepools:
   - "8080"
   - "8443"
   - "443"
-  privateAddressOnly: true
+  privateAddressOnly: false
   requestSpotInstance: false
   tags: owner,brian,KeepRunning,true
   retries: 5
@@ -130,7 +130,7 @@ nodepools:
   volumeType: gp2
   vpcId: vpc-06a1e85ad08595b21
   useEbsOptimizedInstance: false
-  usePrivateAddress: true
+  usePrivateAddress: false
   userdata: ""
   zone: c
 - etcd: false
@@ -161,7 +161,7 @@ nodepools:
   - "8080"
   - "8443"
   - "443"
-  privateAddressOnly: true
+  privateAddressOnly: false
   requestSpotInstance: false
   tags: owner,brian,KeepRunning,true
   retries: 5
@@ -170,7 +170,7 @@ nodepools:
   volumeType: gp2
   vpcId: vpc-06a1e85ad08595b21
   useEbsOptimizedInstance: false
-  usePrivateAddress: true
+  usePrivateAddress: false
   userdata: ""
   zone: a
 - etcd: false
@@ -201,7 +201,7 @@ nodepools:
   - "8080"
   - "8443"
   - "443"
-  privateAddressOnly: true
+  privateAddressOnly: false
   requestSpotInstance: false
   tags: owner,brian,KeepRunning,true
   retries: 5
@@ -210,7 +210,7 @@ nodepools:
   volumeType: gp2
   vpcId: vpc-06a1e85ad08595b21
   useEbsOptimizedInstance: false
-  usePrivateAddress: true
+  usePrivateAddress: false
   userdata: ""
   zone: b
 - etcd: false
@@ -241,7 +241,7 @@ nodepools:
   - "8080"
   - "8443"
   - "443"
-  privateAddressOnly: true
+  privateAddressOnly: false
   requestSpotInstance: false
   tags: owner,brian,KeepRunning,true
   retries: 5
@@ -250,6 +250,6 @@ nodepools:
   volumeType: gp2
   vpcId: vpc-06a1e85ad08595b21
   useEbsOptimizedInstance: false
-  usePrivateAddress: true
+  usePrivateAddress: false
   userdata: ""
   zone: c
