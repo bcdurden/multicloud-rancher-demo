@@ -41,7 +41,7 @@ nodepools:
   - "8080"
   - "8443"
   - "443"
-  privateAddressOnly: true
+  privateAddressOnly: false
   requestSpotInstance: false
   tags: owner,brian,KeepRunning,true
   retries: 5
