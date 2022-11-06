@@ -8,15 +8,15 @@ WORKLOAD_DIR := ${ROOT_DIR}/workloads
 GITOPS_DIR := ${ROOT_DIR}/gitops
 
 BASE_URL=sienarfleet.systems
-GITEA_URL=git.$(BASE_URL)
+# GITEA_URL=git.$(BASE_URL)
 HARBOR_CA_CERT=/tmp/harbor.ca.crt
-GIT_ADMIN_PASSWORD=""
+# GIT_ADMIN_PASSWORD=""
 CLOUD_TOKEN_FILE="key.json"
 
-# Harbor info
-HARBOR_URL=harbor.$(BASE_URL)
-HARBOR_USER=admin
-HARBOR_PASSWORD=""
+# # Harbor info
+# HARBOR_URL=harbor.$(BASE_URL)
+# HARBOR_USER=admin
+# HARBOR_PASSWORD=""
 
 # workloads vars
 WORKLOADS_KAPP_APP_NAME=workloads
