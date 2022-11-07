@@ -3,6 +3,6 @@ helm:
   chart: cluster-template
   version: 0.0.1
   repo: https://harbor.sienarfleet.systems/chartrepo/rancher
-  releaseName: cluster-template-cloud-services
+  releaseName: cluster-template-hiperf-tyreek
   valuesFiles:
     - values.yaml
