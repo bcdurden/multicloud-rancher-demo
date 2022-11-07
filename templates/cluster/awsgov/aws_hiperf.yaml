@@ -1,0 +1,64 @@
+#@data/values
+---
+cloud_provider: amazonec2
+
+#! cluster details
+cluster_name: rke2-aws-hiperf-tyreek
+cluster_short_name: hiperf-tyreek-pool
+cluster_labels:
+    environment: hiperf
+    cluster_name: tyreek
+cluster_annotations: {}
+cloud_secret_name: cattle-global-data:cc-ccjch #! do script stuff to discover this
+k8s_version: v1.24.2+rke2r1
+region: us-gov-west-1
+
+#! infra settings
+vpc_id: vpc-06a1e85ad08595b21
+subnet_ids: [subnet-0d0cd26cf51719ef2, subnet-09bd4e09215b4f39f, subnet-0116d99e8f363e0cb]
+node_ami_id: ami-0f1289f37e46c1eff
+
+#! controlplane nodes
+controlplane:
+  node_count: 1 #! max of 3
+  node_iam_role: K8sUnrestrictedCloudProviderRole
+  instance_type: t3a.xlarge
+  create_security_groups: true
+  security_groups: [] #! only useful if create flag is off
+  ports: ["8080", "8443", "443"]
+  tags: "owner,brian,KeepRunning,true"
+  use_private_address: false
+  use_private_address_only: false
+  userdata: ""
+  failure_retry_count: 5
+  labels: {}
+  taints: {}
+
+  #! disk
+  disk_size_gb: 20
+  ssh_user: ubuntu
+  volume_type: gp2
+
+#! worker nodes
+workers:
+  node_count: 3 #! works in multiples of 3s for simplicity
+  node_iam_role: K8sUnrestrictedCloudProviderRole
+  instance_type: g4dn.xlarge
+  create_security_groups: true
+  security_groups: [] #! only useful if create flag is off
+  ports: ["8080", "8443", "443"]
+  tags: "owner,brian,KeepRunning,true"
+  use_private_address: false
+  use_private_address_only: false
+  userdata: ""
+  failure_retry_count: 5
+  labels: {}
+  taints: {}
+
+  #! disk
+  disk_size_gb: 60
+  ssh_user: ubuntu
+  volume_type: gp2
+
+
+

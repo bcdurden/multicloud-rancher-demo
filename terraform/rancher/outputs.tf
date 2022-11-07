@@ -13,6 +13,9 @@ output "kube" {
     value = local_file.kube_config_server_yaml.content
     sensitive = true
 }
-output "rancher_lb_dns" {
+output "rancher_api_lb_dns" {
+    value = aws_lb.apiserver_lb.dns_name
+}
+output "rancher_ingress_lb_dns" {
     value = aws_lb.ingress_lb.dns_name
 }

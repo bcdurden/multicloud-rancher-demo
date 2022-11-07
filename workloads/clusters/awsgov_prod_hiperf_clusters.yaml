@@ -1,0 +1,12 @@
+kind: GitRepo
+apiVersion: fleet.cattle.io/v1alpha1
+metadata:
+  name: awsgov-hiperf-cluster-loader
+  namespace: fleet-local
+spec:
+  repo: https://github.com/bcdurden/multicloud-rancher-demo.git
+  branch: main  
+  targets:
+  - clusterName: local
+  paths:
+  - "./gitops/clusters/awsgov/hiperf"
