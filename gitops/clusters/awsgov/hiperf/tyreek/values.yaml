@@ -91,7 +91,15 @@ nodepools:
   vpcId: vpc-06a1e85ad08595b21
   useEbsOptimizedInstance: false
   usePrivateAddress: false
-  userdata: ""
+  userdata: |
+    #cloud-config
+    package_update: true
+    runcmd:
+    - apt update
+    - apt upgrade
+    - apt install xorg
+    - apt install nvidia-driver-460
+    - reboot
   zone: a
 - etcd: false
   controlplane: false
@@ -131,7 +139,15 @@ nodepools:
   vpcId: vpc-06a1e85ad08595b21
   useEbsOptimizedInstance: false
   usePrivateAddress: false
-  userdata: ""
+  userdata: |
+    #cloud-config
+    package_update: true
+    runcmd:
+    - apt update
+    - apt upgrade
+    - apt install xorg
+    - apt install nvidia-driver-460
+    - reboot
   zone: b
 - etcd: false
   controlplane: false
@@ -171,5 +187,13 @@ nodepools:
   vpcId: vpc-06a1e85ad08595b21
   useEbsOptimizedInstance: false
   usePrivateAddress: false
-  userdata: ""
+  userdata: |
+    #cloud-config
+    package_update: true
+    runcmd:
+    - apt update
+    - apt upgrade
+    - apt install xorg
+    - apt install nvidia-driver-460
+    - reboot
   zone: c
