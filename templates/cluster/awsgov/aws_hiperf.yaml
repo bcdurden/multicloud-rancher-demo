@@ -6,6 +6,7 @@ cloud_provider: amazonec2
 cluster_name: rke2-aws-hiperf-tyreek
 cluster_short_name: hiperf-tyreek-pool
 cluster_labels:
+    gpu: nvidia
     environment: hiperf
     cluster_name: tyreek
 cluster_annotations: {}

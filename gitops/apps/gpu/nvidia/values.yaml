@@ -1,0 +1,424 @@
+daemonsets:
+  priorityClassName: system-node-critical
+  tolerations:
+    - effect: NoSchedule
+      key: nvidia.com/gpu
+      operator: Exists
+dcgm:
+  args: null
+  enabled: false
+  env: null
+  hostPort: 5555
+  image: dcgm
+  imagePullPolicy: IfNotPresent
+  repository: nvcr.io/nvidia/cloud-native
+  resources: {}
+  version: 3.0.4-1-ubuntu20.04
+dcgmExporter:
+  enabled: true
+  env:
+    - name: DCGM_EXPORTER_LISTEN
+      value: ':9400'
+    - name: DCGM_EXPORTER_KUBERNETES
+      value: 'true'
+    - name: DCGM_EXPORTER_COLLECTORS
+      value: /etc/dcgm-exporter/dcp-metrics-included.csv
+  image: dcgm-exporter
+  imagePullPolicy: IfNotPresent
+  repository: nvcr.io/nvidia/k8s
+  resources: {}
+  serviceMonitor:
+    additionalLabels: {}
+    enabled: false
+    honorLabels: false
+    interval: 15s
+  version: 3.0.4-3.0.0-ubuntu20.04
+devicePlugin:
+  args: null
+  config:
+    default: ''
+    name: ''
+  enabled: true
+  env:
+    - name: PASS_DEVICE_SPECS
+      value: 'true'
+    - name: FAIL_ON_INIT_ERROR
+      value: 'true'
+    - name: DEVICE_LIST_STRATEGY
+      value: envvar
+    - name: DEVICE_ID_STRATEGY
+      value: uuid
+    - name: NVIDIA_VISIBLE_DEVICES
+      value: all
+    - name: NVIDIA_DRIVER_CAPABILITIES
+      value: all
+  image: k8s-device-plugin
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: null
+  repository: nvcr.io/nvidia
+  resources: {}
+  version: v0.12.3-ubi8
+driver:
+  certConfig:
+    name: ''
+  enabled: false
+  env: null
+  image: driver
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: null
+  kernelModuleConfig:
+    name: ''
+  licensingConfig:
+    configMapName: ''
+    nlsEnabled: false
+  manager:
+    env:
+      - name: ENABLE_AUTO_DRAIN
+        value: 'true'
+      - name: DRAIN_USE_FORCE
+        value: 'false'
+      - name: DRAIN_POD_SELECTOR_LABEL
+        value: ''
+      - name: DRAIN_TIMEOUT_SECONDS
+        value: 0s
+      - name: DRAIN_DELETE_EMPTYDIR_DATA
+        value: 'false'
+    image: k8s-driver-manager
+    imagePullPolicy: IfNotPresent
+    repository: nvcr.io/nvidia/cloud-native
+    version: v0.4.2
+  rdma:
+    enabled: false
+    useHostMofed: false
+  repoConfig:
+    configMapName: ''
+  repository: nvcr.io/nvidia
+  resources: {}
+  rollingUpdate:
+    maxUnavailable: '1'
+  version: 515.65.01
+  virtualTopology:
+    config: ''
+gds:
+  args: null
+  enabled: false
+  env: null
+  image: nvidia-fs
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: null
+  repository: nvcr.io/nvidia/cloud-native
+  version: 515.43.04
+gfd:
+  enabled: true
+  env:
+    - name: GFD_SLEEP_INTERVAL
+      value: 60s
+    - name: GFD_FAIL_ON_INIT_ERROR
+      value: 'true'
+  image: gpu-feature-discovery
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: null
+  repository: nvcr.io/nvidia
+  resources: {}
+  version: v0.6.2-ubi8
+mig:
+  strategy: single
+migManager:
+  config:
+    name: ''
+  enabled: true
+  env:
+    - name: WITH_REBOOT
+      value: 'false'
+  gpuClientsConfig:
+    name: ''
+  image: k8s-mig-manager
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: null
+  repository: nvcr.io/nvidia/cloud-native
+  resources: {}
+  version: v0.5.0-ubuntu20.04
+nfd:
+  enabled: true
+node-feature-discovery:
+  fullnameOverride: ''
+  global:
+    cattle:
+      clusterId: c-m-8zcjp7j6
+      clusterName: rke2-aws-hiperf-tyreek
+      rkePathPrefix: ''
+      rkeWindowsPathPrefix: ''
+      systemDefaultRegistry: ''
+      systemProjectId: p-sqmhl
+      url: https://rancher.sienarfleet.systems
+    systemDefaultRegistry: ''
+  image:
+    pullPolicy: IfNotPresent
+    repository: k8s.gcr.io/nfd/node-feature-discovery
+  imagePullSecrets: null
+  master:
+    affinity:
+      nodeAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+                - key: node-role.kubernetes.io/master
+                  operator: In
+                  values:
+                    - ''
+            weight: 1
+          - preference:
+              matchExpressions:
+                - key: node-role.kubernetes.io/control-plane
+                  operator: In
+                  values:
+                    - ''
+            weight: 1
+    annotations: {}
+    extraLabelNs:
+      - nvidia.com
+    featureRulesController: null
+    instance: null
+    nodeSelector: {}
+    podSecurityContext: {}
+    rbac:
+      create: true
+    replicaCount: 1
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+    service:
+      port: 8080
+      type: ClusterIP
+    serviceAccount:
+      annotations: {}
+      create: true
+      name: node-feature-discovery
+    tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+        operator: Equal
+        value: ''
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/control-plane
+        operator: Equal
+        value: ''
+  nameOverride: ''
+  nodeFeatureRule:
+    createCRD: true
+  tls:
+    certManager: false
+    enable: false
+  topologyUpdater:
+    affinity: {}
+    annotations: {}
+    createCRDs: false
+    enable: false
+    nodeSelector: {}
+    podSecurityContext: {}
+    rbac:
+      create: false
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      runAsUser: 0
+    serviceAccount:
+      annotations: {}
+      create: false
+    tolerations: null
+    updateInterval: 60s
+    watchNamespace: '*'
+  worker:
+    affinity: {}
+    annotations: {}
+    config:
+      sources:
+        pci:
+          deviceClassWhitelist:
+            - '02'
+            - '0200'
+            - '0207'
+            - '0300'
+            - '0302'
+          deviceLabelFields:
+            - vendor
+    mountUsrSrc: false
+    nodeSelector: {}
+    podSecurityContext: {}
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+    tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+        operator: Equal
+        value: ''
+      - effect: NoSchedule
+        key: nvidia.com/gpu
+        operator: Equal
+        value: present
+nodeStatusExporter:
+  enabled: false
+  image: gpu-operator-validator
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: null
+  repository: nvcr.io/nvidia/cloud-native
+  resources: {}
+operator:
+  affinity:
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - preference:
+            matchExpressions:
+              - key: node-role.kubernetes.io/master
+                operator: In
+                values:
+                  - ''
+          weight: 1
+  annotations:
+    openshift.io/scc: restricted-readonly
+  cleanupCRD: false
+  defaultRuntime: docker
+  image: gpu-operator
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: null
+  initContainer:
+    image: cuda
+    imagePullPolicy: IfNotPresent
+    repository: nvcr.io/nvidia
+    version: 11.7.1-base-ubi8
+  logging:
+    timeEncoding: epoch
+  priorityClassName: system-node-critical
+  repository: nvcr.io/nvidia
+  resources:
+    limits:
+      cpu: 500m
+      memory: 350Mi
+    requests:
+      cpu: 200m
+      memory: 100Mi
+  runtimeClass: nvidia
+  tolerations:
+    - effect: NoSchedule
+      key: node-role.kubernetes.io/master
+      operator: Equal
+      value: ''
+  upgradeCRD: false
+  use_ocp_driver_toolkit: false
+platform:
+  openshift: false
+psp:
+  enabled: false
+sandboxDevicePlugin:
+  args: null
+  enabled: true
+  env: null
+  image: kubevirt-gpu-device-plugin
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: null
+  repository: nvcr.io/nvidia
+  resources: {}
+  version: v1.2.1
+sandboxWorkloads:
+  defaultWorkload: container
+  enabled: false
+toolkit:
+  enabled: true
+  env:
+    - name: CONTAINERD_CONFIG
+      value: /var/lib/rancher/k3s/agent/etc/containerd/config.toml
+    - name: CONTAINERD_SOCKET
+      value: /run/k3s/containerd/containerd.sock
+    - name: CONTAINERD_RUNTIME_CLASS
+      value: nvidia
+    - name: CONTAINERD_SET_AS_DEFAULT
+      value: 'true'
+  image: container-toolkit
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: null
+  installDir: /usr/local/nvidia
+  repository: nvcr.io/nvidia/k8s
+  resources: {}
+  version: v1.11.0-ubuntu20.04
+validator:
+  args: null
+  env: null
+  image: gpu-operator-validator
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: null
+  plugin:
+    env:
+      - name: WITH_WORKLOAD
+        value: 'true'
+  repository: nvcr.io/nvidia/cloud-native
+  resources: {}
+vfioManager:
+  driverManager:
+    env:
+      - name: ENABLE_AUTO_DRAIN
+        value: 'false'
+    image: k8s-driver-manager
+    imagePullPolicy: IfNotPresent
+    repository: nvcr.io/nvidia/cloud-native
+    version: v0.4.2
+  enabled: true
+  env: null
+  image: cuda
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: null
+  repository: nvcr.io/nvidia
+  resources: {}
+  version: 11.7.1-base-ubi8
+vgpuDeviceManager:
+  config:
+    default: default
+    name: ''
+  enabled: true
+  env: null
+  image: vgpu-device-manager
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: null
+  repository: nvcr.io/nvidia/cloud-native
+  version: v0.2.0
+vgpuManager:
+  driverManager:
+    env:
+      - name: ENABLE_AUTO_DRAIN
+        value: 'false'
+    image: k8s-driver-manager
+    imagePullPolicy: IfNotPresent
+    repository: nvcr.io/nvidia/cloud-native
+    version: v0.4.2
+  enabled: false
+  env: null
+  image: vgpu-manager
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: null
+  repository: ''
+  resources: {}
+  version: ''
+global:
+  cattle:
+    clusterId: c-m-8zcjp7j6
+    clusterName: rke2-aws-hiperf-tyreek
+    rkePathPrefix: ''
+    rkeWindowsPathPrefix: ''
+    systemDefaultRegistry: ''
+    systemProjectId: p-sqmhl
+    url: https://rancher.sienarfleet.systems
+  systemDefaultRegistry: ''

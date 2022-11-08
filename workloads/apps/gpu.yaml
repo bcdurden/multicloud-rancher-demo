@@ -1,0 +1,16 @@
+kind: GitRepo
+apiVersion: fleet.cattle.io/v1alpha1
+metadata:
+  name: gpu-nvidia
+  namespace: fleet-default
+spec:
+  repo: https://github.com/bcdurden/multicloud-rancher-demo.git
+  branch: main
+
+  targets:
+  - clusterSelector:
+      matchLabels:
+        gpu: nvidia
+
+  paths:
+  - "./gitops/apps/gpu/nvidia"

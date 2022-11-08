@@ -3,6 +3,7 @@ cloudCredentialSecretName: cattle-global-data:cc-fltjp
 cluster:
   annotations: {}
   labels:
+    gpu: nvidia
     environment: hiperf
     cluster_name: tyreek
   name: rke2-aws-hiperf-tyreek
