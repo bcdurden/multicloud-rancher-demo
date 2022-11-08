@@ -94,11 +94,9 @@ nodepools:
   userdata: |
     #cloud-config
     package_update: true
+    packages:
+    - nvidia-driver-520
     runcmd:
-    - apt update -y
-    - apt upgrade -y
-    - apt install xorg -y
-    - apt install nvidia-driver-460 -y
     - reboot
   zone: a
 - etcd: false
@@ -142,11 +140,9 @@ nodepools:
   userdata: |
     #cloud-config
     package_update: true
+    packages:
+    - nvidia-driver-520
     runcmd:
-    - apt update -y
-    - apt upgrade -y
-    - apt install xorg -y
-    - apt install nvidia-driver-460 -y
     - reboot
   zone: b
 - etcd: false
@@ -190,10 +186,8 @@ nodepools:
   userdata: |
     #cloud-config
     package_update: true
+    packages:
+    - nvidia-driver-520
     runcmd:
-    - apt update -y
-    - apt upgrade -y
-    - apt install xorg -y
-    - apt install nvidia-driver-460 -y
     - reboot
   zone: c
