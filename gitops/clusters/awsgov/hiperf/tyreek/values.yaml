@@ -95,10 +95,10 @@ nodepools:
     #cloud-config
     package_update: true
     runcmd:
-    - apt update
-    - apt upgrade
-    - apt install xorg
-    - apt install nvidia-driver-460
+    - apt update -y
+    - apt upgrade -y
+    - apt install xorg -y
+    - apt install nvidia-driver-460 -y
     - reboot
   zone: a
 - etcd: false
@@ -143,10 +143,10 @@ nodepools:
     #cloud-config
     package_update: true
     runcmd:
-    - apt update
-    - apt upgrade
-    - apt install xorg
-    - apt install nvidia-driver-460
+    - apt update -y
+    - apt upgrade -y
+    - apt install xorg -y
+    - apt install nvidia-driver-460 -y
     - reboot
   zone: b
 - etcd: false
@@ -191,9 +191,9 @@ nodepools:
     #cloud-config
     package_update: true
     runcmd:
-    - apt update
-    - apt upgrade
-    - apt install xorg
-    - apt install nvidia-driver-460
+    - apt update -y
+    - apt upgrade -y
+    - apt install xorg -y
+    - apt install nvidia-driver-460 -y
     - reboot
   zone: c
