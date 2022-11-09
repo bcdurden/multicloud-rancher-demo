@@ -2,7 +2,7 @@ defaultNamespace: default
 helm:
   # chart: cluster-template
   version: 0.0.1
-  repo: https://github.com/rancherfederal/kubecon-fleet-stack/tree/main/charts/cluster-template
+  repo: https://github.com/rancherfederal/kubecon-fleet-stack/tree/main/charts
   releaseName: cluster-template-hiperf-tyreek
   valuesFiles:
     - values.yaml
