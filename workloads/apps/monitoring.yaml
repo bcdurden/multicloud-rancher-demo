@@ -15,6 +15,10 @@ spec:
   - clusterSelector:
       matchLabels:
         environment: shared
+  - clusterSelector:
+      matchLabels:
+        gpu: nvidia
+        environment: hiperf
 
   paths:
   - "./gitops/apps/monitoring"
