@@ -13,7 +13,7 @@ targetCustomizations:
 - name: hiperf-gpu
   helm:
     values:
-      prometheus:
+      prometheusSpec:
         additionalScrapeConfigs:
         - job_name: gpu-metrics
           scrape_interval: 1s
