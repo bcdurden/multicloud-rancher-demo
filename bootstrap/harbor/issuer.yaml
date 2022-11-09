@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    # Staging API
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: bcdurden@gmail.com
+    privateKeySecretRef:
+      name: harbor-key-staging
+    solvers:
+    - http01:
+        ingress: {}

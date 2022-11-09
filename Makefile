@@ -9,14 +9,13 @@ GITOPS_DIR := ${ROOT_DIR}/gitops
 
 BASE_URL=sienarfleet.systems
 # GITEA_URL=git.$(BASE_URL)
-HARBOR_CA_CERT=/tmp/harbor.ca.crt
 # GIT_ADMIN_PASSWORD=""
 CLOUD_TOKEN_FILE="key.json"
 
-# # Harbor info
-# HARBOR_URL=harbor.$(BASE_URL)
-# HARBOR_USER=admin
-# HARBOR_PASSWORD=""
+# Harbor info
+HARBOR_URL=harbor.$(BASE_URL)
+HARBOR_USER=admin
+HARBOR_PASSWORD=""
 
 # workloads vars
 WORKLOADS_KAPP_APP_NAME=workloads
@@ -26,9 +25,21 @@ LOCAL_CLUSTER_NAME=rancher-aws
 check-tools: ## Check to make sure you have the right tools
 	$(foreach exec,$(REQUIRED_BINARIES),\
 		$(if $(shell which $(exec)),,$(error "'$(exec)' not found. It is a dependency for this Makefile")))
+
+# registry targets
+registry: check-tools
+	@printf "\n===> Installing Registry\n";
+	@kubectx $(LOCAL_CLUSTER_NAME)
+	@helm upgrade --install harbor ${BOOTSTRAP_DIR}/harbor/harbor-1.9.3.tgz \
+	--version 1.9.3 -n harbor -f ${BOOTSTRAP_DIR}/harbor/values.yaml --create-namespace
+registry-delete: check-tools
+	@printf "\n===> Deleting Registry\n";
+	@helm delete harbor -n harbor
+
 # certificate targets
 certs: check-tools # needs CLOUDFLARE_TOKEN set and HARVESTER_CONTEXT for non-default contexts
 	@printf "\n===>Making Certificates\n";
+	@kubectx $(LOCAL_CLUSTER_NAME)
 	@kubectl create secret generic clouddns-dns01-solver-svc-acct -n cert-manager --from-file=$(CLOUD_TOKEN_FILE) --dry-run=client -o yaml | kubectl apply -f -
 	@kubectl apply -f $(BOOTSTRAP_DIR)/certs/issuer-prod-clouddns.yaml --dry-run=client -o yaml | kubectl apply -f -
 	@kubectl create ns harbor --dry-run=client -o yaml | kubectl apply -f -
