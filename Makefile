@@ -26,16 +26,6 @@ check-tools: ## Check to make sure you have the right tools
 	$(foreach exec,$(REQUIRED_BINARIES),\
 		$(if $(shell which $(exec)),,$(error "'$(exec)' not found. It is a dependency for this Makefile")))
 
-# registry targets
-registry: check-tools
-	@printf "\n===> Installing Registry\n";
-	@kubectx $(LOCAL_CLUSTER_NAME)
-	@helm upgrade --install harbor ${BOOTSTRAP_DIR}/harbor/harbor-1.9.3.tgz \
-	--version 1.9.3 -n harbor -f ${BOOTSTRAP_DIR}/harbor/values.yaml --create-namespace
-registry-delete: check-tools
-	@printf "\n===> Deleting Registry\n";
-	@helm delete harbor -n harbor
-
 # certificate targets
 certs: check-tools # needs CLOUDFLARE_TOKEN set and HARVESTER_CONTEXT for non-default contexts
 	@printf "\n===>Making Certificates\n";
@@ -78,6 +68,17 @@ rancher-destroy: check-tools
 	@printf "\n====> Destroying RKE2 + Rancher\n";
 	$(MAKE) terraform-destroy COMPONENT=rancher
 	@kubecm delete $(LOCAL_CLUSTER_NAME)
+
+# registry targets
+registry: check-tools
+	@printf "\n===> Installing Registry\n";
+	@kubectx $(LOCAL_CLUSTER_NAME)
+	@kubectl apply -f ${BOOTSTRAP_DIR}/rancher/ebs_sc.yaml
+	@helm upgrade --install harbor ${BOOTSTRAP_DIR}/harbor/harbor-1.9.3.tgz \
+	--version 1.9.3 -n harbor -f ${BOOTSTRAP_DIR}/harbor/values.yaml --create-namespace
+registry-delete: check-tools
+	@printf "\n===> Deleting Registry\n";
+	@helm delete harbor -n harbor
 
 # generation
 cluster-generate-aws: check-tools
