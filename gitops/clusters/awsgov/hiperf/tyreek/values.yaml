@@ -46,7 +46,7 @@ nodepools:
   requestSpotInstance: false
   tags: owner,brian,KeepRunning,true
   retries: 5
-  rootSize: 20
+  rootSize: 60
   sshUser: ubuntu
   volumeType: gp2
   vpcId: vpc-06a1e85ad08595b21
@@ -69,7 +69,7 @@ nodepools:
   endpoint: ""
   iamInstanceProfile: K8sUnrestrictedCloudProviderRole
   insecureTransport: false
-  instanceType: g4dn.xlarge
+  instanceType: g4dn.2xlarge
   region: us-gov-west-1
   createSecurityGroup: true
   securityGroups: []
@@ -86,7 +86,7 @@ nodepools:
   requestSpotInstance: false
   tags: owner,brian,KeepRunning,true
   retries: 5
-  rootSize: 60
+  rootSize: 120
   sshUser: ubuntu
   volumeType: gp2
   vpcId: vpc-06a1e85ad08595b21
@@ -97,6 +97,7 @@ nodepools:
     package_update: true
     packages:
     - nvidia-driver-520
+    - nvidia-cuda-toolkit
     runcmd:
     - reboot
   zone: a
@@ -115,7 +116,7 @@ nodepools:
   endpoint: ""
   iamInstanceProfile: K8sUnrestrictedCloudProviderRole
   insecureTransport: false
-  instanceType: g4dn.xlarge
+  instanceType: g4dn.2xlarge
   region: us-gov-west-1
   createSecurityGroup: true
   securityGroups: []
@@ -132,7 +133,7 @@ nodepools:
   requestSpotInstance: false
   tags: owner,brian,KeepRunning,true
   retries: 5
-  rootSize: 60
+  rootSize: 120
   sshUser: ubuntu
   volumeType: gp2
   vpcId: vpc-06a1e85ad08595b21
@@ -143,6 +144,7 @@ nodepools:
     package_update: true
     packages:
     - nvidia-driver-520
+    - nvidia-cuda-toolkit
     runcmd:
     - reboot
   zone: b
@@ -161,7 +163,7 @@ nodepools:
   endpoint: ""
   iamInstanceProfile: K8sUnrestrictedCloudProviderRole
   insecureTransport: false
-  instanceType: g4dn.xlarge
+  instanceType: g4dn.2xlarge
   region: us-gov-west-1
   createSecurityGroup: true
   securityGroups: []
@@ -178,7 +180,7 @@ nodepools:
   requestSpotInstance: false
   tags: owner,brian,KeepRunning,true
   retries: 5
-  rootSize: 60
+  rootSize: 120
   sshUser: ubuntu
   volumeType: gp2
   vpcId: vpc-06a1e85ad08595b21
@@ -189,6 +191,7 @@ nodepools:
     package_update: true
     packages:
     - nvidia-driver-520
+    - nvidia-cuda-toolkit
     runcmd:
     - reboot
   zone: c

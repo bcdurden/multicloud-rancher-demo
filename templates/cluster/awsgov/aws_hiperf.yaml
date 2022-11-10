@@ -36,7 +36,7 @@ controlplane:
   taints: {}
 
   #! disk
-  disk_size_gb: 20
+  disk_size_gb: 40
   ssh_user: ubuntu
   volume_type: gp2
 
@@ -44,7 +44,7 @@ controlplane:
 workers:
   node_count: 3 #! works in multiples of 3s for simplicity
   node_iam_role: K8sUnrestrictedCloudProviderRole
-  instance_type: g4dn.xlarge
+  instance_type: g4dn.2xlarge
   create_security_groups: true
   security_groups: [] #! only useful if create flag is off
   ports: ["8080", "8443", "443"]
@@ -54,18 +54,17 @@ workers:
   userdata: |
     #cloud-config
     package_update: true
+    packages:
+    - nvidia-driver-520
+    - nvidia-cuda-toolkit
     runcmd:
-    - apt update -y
-    - apt upgrade -y
-    - apt install xorg -y
-    - apt install nvidia-driver-460 -y
     - reboot
   failure_retry_count: 5
   labels: {}
   taints: {}
 
   #! disk
-  disk_size_gb: 60
+  disk_size_gb: 120
   ssh_user: ubuntu
   volume_type: gp2
 
