@@ -13,8 +13,8 @@ expose:
   tls:
     certSource: secret
     secret:
-      secretName: harbor-prod-certificate
-      notarySecretName: harbor-prod-certificate
+      secretName: harbor-prod-homelab-certificate
+      notarySecretName: harbor-prod-homelab-certificate
 
 persistence:
   persistentVolumeClaim:
