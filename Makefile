@@ -12,8 +12,20 @@ BASE_URL=sienarfleet.systems
 # GIT_ADMIN_PASSWORD=""
 CLOUD_TOKEN_FILE="key.json"
 
+# Carbide info
+CARBIDE_USER="internal-tester-read"
+CARBIDE_PASSWORD=""
+IMAGES_FILE=""
+
+# Rancher on Harvester Info
+RKE2_VIP=10.10.5.4
+RANCHER_URL=rancher.home.$(BASE_URL)
+RANCHER_HA_MODE=false
+RANCHER_WORKER_COUNT=1
+RANCHER_NODE_SIZE="20Gi"
+
 # Harbor info
-HARBOR_URL=harbor.$(BASE_URL)
+HARBOR_URL=harbor.home.$(BASE_URL)
 HARBOR_USER=admin
 HARBOR_PASSWORD=""
 
@@ -21,13 +33,30 @@ HARBOR_PASSWORD=""
 WORKLOADS_KAPP_APP_NAME=workloads
 WORKLOADS_NAMESPACE=default
 LOCAL_CLUSTER_NAME=rancher-aws
+HARVESTER_CONTEXT="harvester"
 
 check-tools: ## Check to make sure you have the right tools
 	$(foreach exec,$(REQUIRED_BINARIES),\
 		$(if $(shell which $(exec)),,$(error "'$(exec)' not found. It is a dependency for this Makefile")))
 
+# airgap targets
+pull-rke2: check-tools
+	@printf "\n===>Pulling RKE2 Images\n";
+	@${BOOTSTRAP_DIR}/airgap_images/pull_carbide_rke2 $(CARBIDE_USER) '$(CARBIDE_PASSWORD)'
+	@printf "\nIf successful, your images will be available at /tmp/rke2-images.tar.gz"
+pull-rancher: check-tools
+	@printf "\n===>Pulling Rancher Images\n";
+	@${BOOTSTRAP_DIR}/airgap_images/pull_carbide_rancher $(CARBIDE_USER) '$(CARBIDE_PASSWORD)'
+	@printf "\nIf successful, your images will be available at /tmp/rancher-images.tar.gz and /tmp/cert-manager.tar.gz"
+pull-misc: check-tools
+	@printf "\n===>Pulling Misc Images\n";
+	@${BOOTSTRAP_DIR}/airgap_images/pull_misc
+push-images: check-tools
+	@printf "\n===>Pushing Images to Harbor\n";
+	@${BOOTSTRAP_DIR}/airgap_images/push_carbide $(HARBOR_URL) $(HARBOR_USER) '$(HARBOR_PASSWORD)' $(IMAGES_FILE)
+
 # certificate targets
-certs: check-tools # needs CLOUDFLARE_TOKEN set and HARVESTER_CONTEXT for non-default contexts
+certs: check-tools # needs CLOUDFLARE_TOKEN set and LOCAL_CLUSTER_NAME for non-default contexts
 	@printf "\n===>Making Certificates\n";
 	@kubectx $(LOCAL_CLUSTER_NAME)
 	@kubectl create secret generic clouddns-dns01-solver-svc-acct -n cert-manager --from-file=$(CLOUD_TOKEN_FILE) --dry-run=client -o yaml | kubectl apply -f -
@@ -57,7 +86,7 @@ terraform-value: check-tools
 	@terraform -chdir=${TERRAFORM_DIR}/$(COMPONENT) output -json | jq -r '.jumpbox_ssh_key.value'
 terraform-destroy: check-tools
 	@terraform -chdir=${TERRAFORM_DIR}/$(COMPONENT) destroy
-	
+
 rancher: check-tools
 	@printf "\n====> Terraforming RKE2 + Rancher\n";
 	$(MAKE) terraform COMPONENT=rancher
@@ -69,16 +98,59 @@ rancher-destroy: check-tools
 	$(MAKE) terraform-destroy COMPONENT=rancher
 	@kubecm delete $(LOCAL_CLUSTER_NAME)
 
+infra: check-tools
+	@printf "\n=====> Terraforming Infra\n";
+	$(MAKE) terraform COMPONENT=harvester-infra
+
+harvester-rancher: check-tools
+	@printf "\n====> Terraforming RKE2 + Rancher\n";
+	$(MAKE) terraform COMPONENT=harvester-rancher
+	@cp ${TERRAFORM_DIR}/rancher/kube_config_server.yaml /tmp/$(LOCAL_CLUSTER_NAME).yaml && kubecm add -c -f /tmp/$(LOCAL_CLUSTER_NAME).yaml && rm /tmp/$(LOCAL_CLUSTER_NAME).yaml
+	@kubectx $(LOCAL_CLUSTER_NAME)
+	$(MAKE) certs
+harvester-rancher-destroy: check-tools
+	@printf "\n====> Destroying RKE2 + Rancher\n";
+	$(MAKE) terraform-destroy COMPONENT=harvester-rancher
+	@kubecm delete $(LOCAL_CLUSTER_NAME)
+
+jumpbox: check-tools
+	@printf "\n====> Terraforming Jumpbox\n";
+	$(MAKE) terraform COMPONENT=harvester-jumpbox
+jumpbox-key: check-tools
+	@printf "\n====> Grabbing generated SSH key\n";
+	$(MAKE) terraform-value COMPONENT=harvester-jumpbox FIELD=".jumpbox_ssh_key.value"
+jumpbox-destroy: check-tools
+	@printf "\n====> Destroying Jumpbox\n";
+	$(MAKE) terraform-destroy COMPONENT=harvester-jumpbox
+
 # registry targets
 registry: check-tools
 	@printf "\n===> Installing Registry\n";
-	@kubectx $(LOCAL_CLUSTER_NAME)
+	@kubectx $(HARVESTER_CONTEXT)
 	@kubectl apply -f ${BOOTSTRAP_DIR}/rancher/ebs_sc.yaml
 	@helm upgrade --install harbor ${BOOTSTRAP_DIR}/harbor/harbor-1.9.3.tgz \
 	--version 1.9.3 -n harbor -f ${BOOTSTRAP_DIR}/harbor/values.yaml --create-namespace
 registry-delete: check-tools
 	@printf "\n===> Deleting Registry\n";
 	@helm delete harbor -n harbor
+
+# git targets
+git: check-tools
+	@kubectx $(HARVESTER_CONTEXT)
+	@helm install gitea $(BOOTSTRAP_DIR)/gitea/gitea-6.0.1.tgz \
+	--namespace git \
+	--set gitea.admin.password=$(GIT_ADMIN_PASSWORD) \
+	--set gitea.admin.username=gitea \
+	--set persistence.size=10Gi \
+	--set postgresql.persistence.size=1Gi \
+	--set gitea.config.server.ROOT_URL=https://$(GITEA_URL) \
+	--set gitea.config.server.DOMAIN=$(GITEA_URL) \
+	--set gitea.config.server.PROTOCOL=http \
+	-f $(BOOTSTRAP_DIR)/gitea/values.yaml
+git-delete: check-tools
+	@kubectx $(HARVESTER_CONTEXT)
+	@printf "\n===> Deleting Gitea\n";
+	@helm delete gitea -n git
 
 # generation
 cluster-generate-aws: check-tools
