@@ -19,7 +19,7 @@ nodepools:
   displayName: control-plane-a
   labels: {}
   taints: {}
-  quantity: 3
+  quantity: 1
   paused: false
   name: control-plane-prod-blue-pool-a
   ami: ami-0f1289f37e46c1eff
@@ -85,7 +85,7 @@ nodepools:
   requestSpotInstance: false
   tags: owner,brian,KeepRunning,true
   retries: 5
-  rootSize: 60
+  rootSize: 120
   sshUser: ubuntu
   volumeType: gp2
   vpcId: vpc-06a1e85ad08595b21
@@ -125,7 +125,7 @@ nodepools:
   requestSpotInstance: false
   tags: owner,brian,KeepRunning,true
   retries: 5
-  rootSize: 60
+  rootSize: 120
   sshUser: ubuntu
   volumeType: gp2
   vpcId: vpc-06a1e85ad08595b21
@@ -165,7 +165,7 @@ nodepools:
   requestSpotInstance: false
   tags: owner,brian,KeepRunning,true
   retries: 5
-  rootSize: 60
+  rootSize: 120
   sshUser: ubuntu
   volumeType: gp2
   vpcId: vpc-06a1e85ad08595b21
