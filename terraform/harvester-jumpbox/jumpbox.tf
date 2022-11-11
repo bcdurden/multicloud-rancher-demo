@@ -41,6 +41,7 @@ resource "harvester_virtualmachine" "jumpbox" {
       packages:
       - qemu-guest-agent
       - make
+      - jq
       runcmd:
       - - systemctl
         - enable
@@ -59,6 +60,12 @@ resource "harvester_virtualmachine" "jumpbox" {
       - git clone https://github.com/ahmetb/kubectx /opt/kubectx
       - ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx
       - ln -s /opt/kubectx/kubens /usr/local/bin/kubens
+      - wget -O- https://carvel.dev/install.sh > install.sh
+      - sudo bash install.sh
+      - rm install.sh
+      - wget -O- https://github.com/mikefarah/yq/releases/download/v4.30.1/yq_linux_amd64
+      - sudo install yq_linux_amd64 /usr/local/bin/yq
+      - rm yq_linux_amd64
 
       ssh_authorized_keys: 
       - ${tls_private_key.rsa_key.public_key_openssh}
