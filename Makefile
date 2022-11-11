@@ -70,8 +70,9 @@ certs: check-tools # needs CLOUDFLARE_TOKEN set and LOCAL_CLUSTER_NAME for non-d
 certs-export: check-tools
 	@printf "\n===>Exporting Certificates\n";
 	@kubectx $(LOCAL_CLUSTER_NAME)
-	@kubectl get secret -n harbor harbor-prod-certificate -o yaml > harbor_cert.yaml
-	@kubectl get secret -n git gitea-prod-certificate -o yaml > gitea_cert.yaml
+	@kubectl get secret -n harbor harbor-prod-homelab-certificate -o yaml > harbor_cert.yaml
+	@kubectl get secret -n git gitea-prod-homelab-certificate -o yaml > gitea_cert.yaml
+	@kubectl get secret -n cattle-system tls-rancher-ingress -o yaml > rancher_cert.yaml
 certs-import: check-tools
 	@printf "\n===>Importing Certificates\n";
 	@kubectx $(LOCAL_CLUSTER_NAME)
