@@ -127,13 +127,12 @@ jumpbox-destroy: check-tools
 registry: check-tools
 	@printf "\n===> Installing Registry\n";
 	@kubectx $(HARVESTER_CONTEXT)
-	@kubectl apply -f ${BOOTSTRAP_DIR}/rancher/ebs_sc.yaml
 	@helm upgrade --install harbor ${BOOTSTRAP_DIR}/harbor/harbor-1.9.3.tgz \
 	--version 1.9.3 -n harbor -f ${BOOTSTRAP_DIR}/harbor/values.yaml --create-namespace
 registry-delete: check-tools
 	@printf "\n===> Deleting Registry\n";
+	@kubectx $(HARVESTER_CONTEXT)
 	@helm delete harbor -n harbor
-
 # git targets
 git: check-tools
 	@kubectx $(HARVESTER_CONTEXT)
