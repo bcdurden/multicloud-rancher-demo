@@ -139,7 +139,7 @@ nodepools:
   displayName: worker-a
   labels: {}
   taints: {}
-  quantity: 2
+  quantity: 4
   paused: false
   name: worker-shared-services-pool-a
   ami: ami-0f1289f37e46c1eff
@@ -179,7 +179,7 @@ nodepools:
   displayName: worker-b
   labels: {}
   taints: {}
-  quantity: 2
+  quantity: 3
   paused: false
   name: worker-shared-services-pool-b
   ami: ami-0f1289f37e46c1eff
@@ -219,7 +219,7 @@ nodepools:
   displayName: worker-c
   labels: {}
   taints: {}
-  quantity: 2
+  quantity: 3
   paused: false
   name: worker-shared-services-pool-c
   ami: ami-0f1289f37e46c1eff
