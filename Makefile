@@ -89,7 +89,6 @@ terraform: check-tools
 terraform-value: check-tools
 	@terraform -chdir=${TERRAFORM_DIR}/$(COMPONENT) output -json | jq -r '.jumpbox_ssh_key.value'
 terraform-destroy: check-tools
-terraform: check-tools
 	@$(VARS) terraform -chdir=${TERRAFORM_DIR}/$(COMPONENT) init
 	@terraform -chdir=${TERRAFORM_DIR}/$(COMPONENT) destroy
 
