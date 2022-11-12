@@ -34,6 +34,7 @@ WORKLOADS_KAPP_APP_NAME=workloads
 WORKLOADS_NAMESPACE=default
 LOCAL_CLUSTER_NAME=rancher-aws
 HARVESTER_CONTEXT="harvester"
+HARVESTER_RANCHER_CLUSTER_NAME=rancher-harvester
 
 check-tools: ## Check to make sure you have the right tools
 	$(foreach exec,$(REQUIRED_BINARIES),\
@@ -66,6 +67,7 @@ certs: check-tools # needs CLOUDFLARE_TOKEN set and LOCAL_CLUSTER_NAME for non-d
 	@kubectl create ns git --dry-run=client -o yaml | kubectl apply -f -
 	@ytt -f $(BOOTSTRAP_DIR)/certs/cert-gitea.yaml -v base_url=$(BASE_URL) | kubectl apply -f -
 	@ytt -f $(BOOTSTRAP_DIR)/certs/cert-rancher.yaml -v base_url=$(BASE_URL) | kubectl apply -f -
+	@ytt -f $(BOOTSTRAP_DIR)/certs/cert-rancherhome.yaml -v base_url=$(BASE_URL) | kubectl apply -f -
 
 certs-export: check-tools
 	@printf "\n===>Exporting Certificates\n";
@@ -73,6 +75,7 @@ certs-export: check-tools
 	@kubectl get secret -n harbor harbor-prod-homelab-certificate -o yaml > harbor_cert.yaml
 	@kubectl get secret -n git gitea-prod-homelab-certificate -o yaml > gitea_cert.yaml
 	@kubectl get secret -n cattle-system tls-rancher-ingress -o yaml > rancher_cert.yaml
+	@kubectl get secret -n cattle-system tls-rancherhome-ingress -o yaml > rancherhome_cert.yaml
 certs-import: check-tools
 	@printf "\n===>Importing Certificates\n";
 	@kubectx $(LOCAL_CLUSTER_NAME)
@@ -88,7 +91,7 @@ terraform-value: check-tools
 terraform-destroy: check-tools
 	@terraform -chdir=${TERRAFORM_DIR}/$(COMPONENT) destroy
 
-rancher: check-tools
+rancher: check-tools  # state stored in S3
 	@printf "\n====> Terraforming RKE2 + Rancher\n";
 	$(MAKE) terraform COMPONENT=rancher
 	@cp ${TERRAFORM_DIR}/rancher/kube_config_server.yaml /tmp/$(LOCAL_CLUSTER_NAME).yaml && kubecm add -c -f /tmp/$(LOCAL_CLUSTER_NAME).yaml && rm /tmp/$(LOCAL_CLUSTER_NAME).yaml
@@ -103,16 +106,22 @@ infra: check-tools
 	@printf "\n=====> Terraforming Infra\n";
 	$(MAKE) terraform COMPONENT=harvester-infra
 
-harvester-rancher: check-tools
+harvester-rancher: check-tools  # state stored in Harvester K8S
 	@printf "\n====> Terraforming RKE2 + Rancher\n";
-	$(MAKE) terraform COMPONENT=harvester-rancher
-	@cp ${TERRAFORM_DIR}/rancher/kube_config_server.yaml /tmp/$(LOCAL_CLUSTER_NAME).yaml && kubecm add -c -f /tmp/$(LOCAL_CLUSTER_NAME).yaml && rm /tmp/$(LOCAL_CLUSTER_NAME).yaml
-	@kubectx $(LOCAL_CLUSTER_NAME)
-	$(MAKE) certs
+	@kubecm delete $(HARVESTER_RANCHER_CLUSTER_NAME) || true
+	@kubectx $(HARVESTER_CONTEXT)
+	$(MAKE) terraform COMPONENT=harvester-rancher VARS='TF_VAR_harbor_url="$(HARBOR_URL)" TF_VAR_rancher_server_dns="$(RANCHER_URL)" TF_VAR_master_vip="$(RKE2_VIP)" TF_VAR_harbor_url="$(HARBOR_URL)" TF_VAR_worker_count=$(RANCHER_WORKER_COUNT) TF_VAR_control_plane_ha_mode=$(RANCHER_HA_MODE) TF_VAR_node_disk_size=$(RANCHER_NODE_SIZE)'
+	@cp ${TERRAFORM_DIR}/harvester-rancher/kube_config_server.yaml /tmp/$(HARVESTER_RANCHER_CLUSTER_NAME).yaml && kubecm add -c -f /tmp/$(HARVESTER_RANCHER_CLUSTER_NAME).yaml && rm /tmp/$(HARVESTER_RANCHER_CLUSTER_NAME).yaml
+	@kubectx $(LOCAL_CONTEXT)
+	@kubectl get secret -n cattle-system tls-rancherhome-ingress -o yaml | yq e '.metadata.name = "tls-rancher-ingress"' - > rancherhome_cert.yaml
+	@kubectx $(HARVESTER_RANCHER_CLUSTER_NAME)
+	@kubectl apply -f rancherhome_cert.yaml
+	@rm rancherhome_cert.yaml
 harvester-rancher-destroy: check-tools
 	@printf "\n====> Destroying RKE2 + Rancher\n";
+	@kubectx $(HARVESTER_CONTEXT)
 	$(MAKE) terraform-destroy COMPONENT=harvester-rancher
-	@kubecm delete $(LOCAL_CLUSTER_NAME)
+	@kubecm delete $(HARVESTER_RANCHER_CLUSTER_NAME) || true
 
 jumpbox: check-tools
 	@printf "\n====> Terraforming Jumpbox\n";
