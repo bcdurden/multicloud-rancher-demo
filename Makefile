@@ -89,6 +89,8 @@ terraform: check-tools
 terraform-value: check-tools
 	@terraform -chdir=${TERRAFORM_DIR}/$(COMPONENT) output -json | jq -r '.jumpbox_ssh_key.value'
 terraform-destroy: check-tools
+terraform: check-tools
+	@$(VARS) terraform -chdir=${TERRAFORM_DIR}/$(COMPONENT) init
 	@terraform -chdir=${TERRAFORM_DIR}/$(COMPONENT) destroy
 
 rancher: check-tools  # state stored in S3
@@ -115,8 +117,7 @@ harvester-rancher: check-tools  # state stored in Harvester K8S
 	@kubectx $(LOCAL_CONTEXT)
 	@kubectl get secret -n cattle-system tls-rancherhome-ingress -o yaml | yq e '.metadata.name = "tls-rancher-ingress"' - > rancherhome_cert.yaml
 	@kubectx $(HARVESTER_RANCHER_CLUSTER_NAME)
-	@kubectl apply -f rancherhome_cert.yaml
-	@rm rancherhome_cert.yaml
+	@kubectl apply -f rancherhome_cert.yaml && rm rancherhome_cert.yaml
 harvester-rancher-destroy: check-tools
 	@printf "\n====> Destroying RKE2 + Rancher\n";
 	@kubectx $(HARVESTER_CONTEXT)
