@@ -1,0 +1,14 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: rancher-prod-harvester-homelab
+  namespace: cattle-system
+spec:
+  secretName: tls-rancherhome-ingress
+  issuerRef:
+    name: letsencrypt-prod-clouddns
+    kind: ClusterIssuer
+  dnsNames:
+  - #@ "rancher.home." + data.values.base_url
