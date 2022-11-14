@@ -17,13 +17,31 @@ nodepools:
 - etcd: true
   controlplane: true
   worker: true
-  displayName: sandbox-nodes
-  name: sandbox-pool
+  displayName: control-plane-nodes
+  name: control-plane-sandbox-pool
   labels: {}
   taints: {}
-  quantity: 3
+  quantity: 1
   paused: false
-  diskSize: 20
+  diskSize: 40
+  diskBus: virtio
+  cpuCount: 2
+  memorySize: 4
+  networkName: default/sandbox
+  networkType: dhcp
+  imageName: default/ubuntu-2004
+  vmNamespace: default
+  sshUser: ubuntu
+- etcd: false
+  controlplane: false
+  worker: true
+  displayName: worker-nodes
+  name: worker-sandbox-pool
+  labels: {}
+  taints: {}
+  quantity: 2
+  paused: false
+  diskSize: 40
   diskBus: virtio
   cpuCount: 2
   memorySize: 4
