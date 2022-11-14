@@ -1,0 +1,34 @@
+cloudprovider: harvester
+cloudCredentialSecretName: cattle-global-data:cc-mp9x7
+cluster:
+  annotations: {}
+  labels:
+    environment: sandbox
+    cluster_name: alpha
+    location: hx90
+  name: sandbox-alpha
+kubernetesVersion: v1.24.2+rke2r1
+monitoring:
+  enabled: false
+rke:
+  localClusterAuthEndpoint:
+    enabled: false
+nodepools:
+- etcd: true
+  controlplane: true
+  worker: true
+  displayName: sandbox-nodes
+  name: sandbox-pool
+  labels: {}
+  taints: {}
+  quantity: 3
+  paused: false
+  diskSize: 20
+  diskBus: virtio
+  cpuCount: 2
+  memorySize: 4
+  networkName: default/sandbox
+  networkType: dhcp
+  imageName: default/ubuntu-2004
+  vmNamespace: default
+  sshUser: ubuntu

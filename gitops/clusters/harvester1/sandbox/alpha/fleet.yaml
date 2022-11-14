@@ -1,0 +1,8 @@
+defaultNamespace: default
+helm:
+  chart: cluster-template
+  version: 0.0.1
+  repo: https://github.com/bcdurden/multicloud-rancher-demo/raw/main/charts/cluster-template.tar.gz
+  releaseName: cluster-template-sandbox-alpha
+  valuesFiles:
+    - values.yaml
