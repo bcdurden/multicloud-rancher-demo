@@ -172,7 +172,7 @@ cluster-generate-harvester: check-tools
 # gitops
 fleet-patch: check-tools
 	@printf "\n===> Patching Fleet Bug\n";
-	@kubectx $(LOCAL_CLUSTER_NAME)
+	@kubectx $(CLUSTER)
 	@kubectl patch ClusterGroup -n fleet-local default --type=json -p='[{"op": "remove", "path": "/spec/selector/matchLabels/name"}]'
 
 workloads-aws-check:
@@ -182,11 +182,11 @@ workloads-aws-yes:
 workloads-aws-delete:
 	$(MAKE) _workloads-delete COMPONENT=aws CLUSTER=$(LOCAL_CLUSTER_NAME)
 workloads-harvester-check:
-	$(MAKE) _workloads-check COMPONENT=harvester CLUSTER=$(HARVESTER_CONTEXT)
+	$(MAKE) _workloads-check COMPONENT=harvester CLUSTER=$(HARVESTER_RANCHER_CLUSTER_NAME)
 workloads-harvester-yes:
-	$(MAKE) _workloads-yes COMPONENT=harvester CLUSTER=$(HARVESTER_CONTEXT)
+	$(MAKE) _workloads-yes COMPONENT=harvester CLUSTER=$(HARVESTER_RANCHER_CLUSTER_NAME)
 workloads-harvester-delete:
-	$(MAKE) _workloads-delete COMPONENT=harvester CLUSTER=$(HARVESTER_CONTEXT)
+	$(MAKE) _workloads-delete COMPONENT=harvester CLUSTER=$(HARVESTER_RANCHER_CLUSTER_NAME)
 
 _workloads-check: check-tools
 	@printf "\n===> Synchronizing Workloads with Fleet in $(COMPONENT) (dry-run)\n";
