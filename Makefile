@@ -187,7 +187,7 @@ workloads-harvester-yes:
 	$(MAKE) _workloads-yes COMPONENT=harvester CLUSTER=$(HARVESTER_CONTEXT)
 workloads-harvester-delete:
 	$(MAKE) _workloads-delete COMPONENT=harvester CLUSTER=$(HARVESTER_CONTEXT)
-	
+
 _workloads-check: check-tools
 	@printf "\n===> Synchronizing Workloads with Fleet in $(COMPONENT) (dry-run)\n";
 	@kubectx $(CLUSTER)
@@ -195,7 +195,7 @@ _workloads-check: check-tools
 _workloads-yes: check-tools
 	@printf "\n===> Synchronizing Workloads with Fleet in $(COMPONENT) \n";
 	@kubectx $(CLUSTER)
-	@ytt -f $(WORKLOAD_DIR)/$(COMPONENT) | kapp deploy $(WORKLOADS_KAPP_APP_NAME)-$(COMPONENT) -n $(WORKLOADS_NAMESPACE) -f - -y 
+	@ytt -f $(WORKLOAD_DIR)/$(COMPONENT) | kapp deploy -a $(WORKLOADS_KAPP_APP_NAME)-$(COMPONENT) -n $(WORKLOADS_NAMESPACE) -f - -y 
 _workloads-delete: check-tools
 	@printf "\n===> Deleting Workloads with Fleet in $(COMPONENT) \n";
 	@kubectx $(CLUSTER)
