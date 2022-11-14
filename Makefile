@@ -35,6 +35,7 @@ WORKLOADS_NAMESPACE=default
 LOCAL_CLUSTER_NAME=rancher-aws
 HARVESTER_CONTEXT="harvester"
 HARVESTER_RANCHER_CLUSTER_NAME=rancher-harvester
+HARVESTER_RANCHER_CERT_SECRET=rancherhome_cert.yaml
 
 check-tools: ## Check to make sure you have the right tools
 	$(foreach exec,$(REQUIRED_BINARIES),\
@@ -86,10 +87,13 @@ certs-import: check-tools
 terraform: check-tools
 	@$(VARS) terraform -chdir=${TERRAFORM_DIR}/$(COMPONENT) init
 	@$(VARS) terraform -chdir=${TERRAFORM_DIR}/$(COMPONENT) apply
+terraform-init: check-tools
+	@$(VARS) terraform -chdir=${TERRAFORM_DIR}/$(COMPONENT) init
+terraform-apply: check-tools
+	@$(VARS) terraform -chdir=${TERRAFORM_DIR}/$(COMPONENT) apply
 terraform-value: check-tools
 	@terraform -chdir=${TERRAFORM_DIR}/$(COMPONENT) output -json | jq -r '.jumpbox_ssh_key.value'
 terraform-destroy: check-tools
-	@$(VARS) terraform -chdir=${TERRAFORM_DIR}/$(COMPONENT) init
 	@terraform -chdir=${TERRAFORM_DIR}/$(COMPONENT) destroy
 
 rancher: check-tools  # state stored in S3
@@ -111,12 +115,10 @@ harvester-rancher: check-tools  # state stored in Harvester K8S
 	@printf "\n====> Terraforming RKE2 + Rancher\n";
 	@kubecm delete $(HARVESTER_RANCHER_CLUSTER_NAME) || true
 	@kubectx $(HARVESTER_CONTEXT)
-	$(MAKE) terraform COMPONENT=harvester-rancher VARS='TF_VAR_harbor_url="$(HARBOR_URL)" TF_VAR_rancher_server_dns="$(RANCHER_URL)" TF_VAR_master_vip="$(RKE2_VIP)" TF_VAR_harbor_url="$(HARBOR_URL)" TF_VAR_worker_count=$(RANCHER_WORKER_COUNT) TF_VAR_control_plane_ha_mode=$(RANCHER_HA_MODE) TF_VAR_node_disk_size=$(RANCHER_NODE_SIZE)'
+	$(MAKE) terraform-apply COMPONENT=harvester-rancher VARS='TF_VAR_harbor_url="$(HARBOR_URL)" TF_VAR_rancher_server_dns="$(RANCHER_URL)" TF_VAR_master_vip="$(RKE2_VIP)" TF_VAR_harbor_url="$(HARBOR_URL)" TF_VAR_worker_count=$(RANCHER_WORKER_COUNT) TF_VAR_control_plane_ha_mode=$(RANCHER_HA_MODE) TF_VAR_node_disk_size=$(RANCHER_NODE_SIZE)'
 	@cp ${TERRAFORM_DIR}/harvester-rancher/kube_config_server.yaml /tmp/$(HARVESTER_RANCHER_CLUSTER_NAME).yaml && kubecm add -c -f /tmp/$(HARVESTER_RANCHER_CLUSTER_NAME).yaml && rm /tmp/$(HARVESTER_RANCHER_CLUSTER_NAME).yaml
-	@kubectx $(LOCAL_CONTEXT)
-	@kubectl get secret -n cattle-system tls-rancherhome-ingress -o yaml | yq e '.metadata.name = "tls-rancher-ingress"' - > rancherhome_cert.yaml
 	@kubectx $(HARVESTER_RANCHER_CLUSTER_NAME)
-	@kubectl apply -f rancherhome_cert.yaml && rm rancherhome_cert.yaml
+	@kubectl apply -f $(HARVESTER_RANCHER_CERT_SECRET)
 harvester-rancher-destroy: check-tools
 	@printf "\n====> Destroying RKE2 + Rancher\n";
 	@kubectx $(HARVESTER_CONTEXT)
@@ -173,20 +175,31 @@ fleet-patch: check-tools
 	@kubectx $(LOCAL_CLUSTER_NAME)
 	@kubectl patch ClusterGroup -n fleet-local default --type=json -p='[{"op": "remove", "path": "/spec/selector/matchLabels/name"}]'
 
-workloads-check: check-tools
-	@printf "\n===> Synchronizing Workloads with Fleet (dry-run)\n";
-	@kubectx $(LOCAL_CLUSTER_NAME)
-	@ytt -f $(WORKLOAD_DIR) | kapp deploy -a $(WORKLOADS_KAPP_APP_NAME) -n $(WORKLOADS_NAMESPACE) -f - 
-
-workloads-yes: check-tools
-	@printf "\n===> Synchronizing Workloads with Fleet\n";
-	@kubectx $(LOCAL_CLUSTER_NAME)
-	@ytt -f $(WORKLOAD_DIR) | kapp deploy -a $(WORKLOADS_KAPP_APP_NAME) -n $(WORKLOADS_NAMESPACE) -f - -y 
-
-workloads-delete: check-tools
-	@printf "\n===> Deleting Workloads with Fleet\n";
-	@kubectx $(LOCAL_CLUSTER_NAME)
-	@kapp delete -a $(WORKLOADS_KAPP_APP_NAME) -n $(WORKLOADS_NAMESPACE)
+workloads-aws-check:
+	$(MAKE) _workloads-check COMPONENT=aws CLUSTER=$(LOCAL_CLUSTER_NAME)
+workloads-aws-yes:
+	$(MAKE) _workloads-yes COMPONENT=aws CLUSTER=$(LOCAL_CLUSTER_NAME)
+workloads-aws-delete:
+	$(MAKE) _workloads-delete COMPONENT=aws CLUSTER=$(LOCAL_CLUSTER_NAME)
+workloads-harvester-check:
+	$(MAKE) _workloads-check COMPONENT=harvester CLUSTER=$(HARVESTER_CONTEXT)
+workloads-harvester-yes:
+	$(MAKE) _workloads-yes COMPONENT=harvester CLUSTER=$(HARVESTER_CONTEXT)
+workloads-harvester-delete:
+	$(MAKE) _workloads-delete COMPONENT=harvester CLUSTER=$(HARVESTER_CONTEXT)
+	
+_workloads-check: check-tools
+	@printf "\n===> Synchronizing Workloads with Fleet in $(COMPONENT) (dry-run)\n";
+	@kubectx $(CLUSTER)
+	@ytt -f $(WORKLOAD_DIR)/$(COMPONENT) | kapp deploy -a $(WORKLOADS_KAPP_APP_NAME)-$(COMPONENT) -n $(WORKLOADS_NAMESPACE) -f - 
+_workloads-yes: check-tools
+	@printf "\n===> Synchronizing Workloads with Fleet in $(COMPONENT) \n";
+	@kubectx $(CLUSTER)
+	@ytt -f $(WORKLOAD_DIR)/$(COMPONENT) | kapp deploy $(WORKLOADS_KAPP_APP_NAME)-$(COMPONENT) -n $(WORKLOADS_NAMESPACE) -f - -y 
+_workloads-delete: check-tools
+	@printf "\n===> Deleting Workloads with Fleet in $(COMPONENT) \n";
+	@kubectx $(CLUSTER)
+	@kapp delete -a $(WORKLOADS_KAPP_APP_NAME)-$(COMPONENT) -n $(WORKLOADS_NAMESPACE)
 
 status: check-tools
 	@printf "\n===> Inspecting Running Workloads in Fleet\n";
