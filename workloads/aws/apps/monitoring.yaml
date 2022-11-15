@@ -11,15 +11,14 @@ spec:
   targets:
   - clusterSelector:
       matchLabels:
-        environment: shared
-        cluster_name: services
+        environment: prod
   - clusterSelector:
       matchLabels:
-        environment: prod
-        cluster_name: blue
+        environment: shared
   - clusterSelector:
       matchLabels:
         environment: hiperf
+        gpu: nvidia
 
   paths:
   - "./gitops/apps/monitoring"
