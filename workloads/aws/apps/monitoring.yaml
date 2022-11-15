@@ -1,0 +1,25 @@
+kind: GitRepo
+apiVersion: fleet.cattle.io/v1alpha1
+metadata:
+  name: monitoring
+  namespace: fleet-default
+spec:
+  repo: https://github.com/bcdurden/multicloud-rancher-demo.git
+  branch: main
+
+  # To target specific clusters, uncomment this block
+  targets:
+  - clusterSelector:
+      matchLabels:
+        environment: shared
+        cluster_name: services
+  - clusterSelector:
+      matchLabels:
+        environment: prod
+        cluster_name: blue
+  - clusterSelector:
+      matchLabels:
+        environment: hiperf
+
+  paths:
+  - "./gitops/apps/monitoring"
