@@ -148,7 +148,7 @@ registry-delete: check-tools
 # git targets
 git: check-tools
 	@kubectx $(HARVESTER_CONTEXT)
-	@helm install gitea $(BOOTSTRAP_DIR)/gitea/gitea-6.0.1.tgz \
+	@helm upgrade --install gitea $(BOOTSTRAP_DIR)/gitea/gitea-6.0.1.tgz \
 	--namespace git \
 	--set gitea.admin.password=$(GIT_ADMIN_PASSWORD) \
 	--set gitea.admin.username=gitea \

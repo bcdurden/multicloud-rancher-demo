@@ -4,7 +4,7 @@ metadata:
   name: sandbox-cluster-loader
   namespace: fleet-local
 spec:
-  repo: https://github.com/bcdurden/multicloud-rancher-demo.git
+  repo: https://git.sienarfleet.systems/gitea/multicloud-rancher-demo.git
   branch: main  
   targets:
   - clusterName: local

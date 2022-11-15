@@ -11,14 +11,7 @@ spec:
   targets:
   - clusterSelector:
       matchLabels:
-        environment: prod
-  - clusterSelector:
-      matchLabels:
-        environment: shared
-  - clusterSelector:
-      matchLabels:
-        gpu: nvidia
-        environment: hiperf
+        environment: sandbox
 
   paths:
   - "./gitops/apps/monitoring"
