@@ -1,8 +1,6 @@
 defaultNamespace: cattle-neuvector-system
 helm:
-  repo: https://harbor.sienarfleet.systems/chartrepo/rancher
-  chart: neuvector-crd
-  version: 100.0.1+up2.2.2
+  chart: https://github.com/bcdurden/multicloud-rancher-demo/blob/main/bootstrap/rancher/neuvector-crd-100.0.1+up2.2.2.tgz?raw=true
   releaseName: neuvector-crd
   valuesFiles:
     - values.yaml
