@@ -62,16 +62,6 @@ resource "harvester_virtualmachine" "node" {
           token: ${var.cluster_token}
           server: https://${var.master_hostname}:9345
           system-default-registry: ${var.rke2_registry}
-          kube-apiserver-arg:
-          - authorization-mode=RBAC,Node
-          kubelet-arg:
-          - protect-kernel-defaults=true
-          - read-only-port=0
-          - authorization-mode=Webhook
-          node-label: []
-          node-taint: []
-          profile: cis-1.6
-          write-kubeconfig-mode: 416
       - path: /etc/hosts
         owner: root
         content: |

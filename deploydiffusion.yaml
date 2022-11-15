@@ -4,38 +4,14 @@ kind: PersistentVolumeClaim
 metadata:
   labels:
     app: diffusion-demo
-  name: diffusion-data-pvc
+  name: outputs
   namespace: default
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 50Gi
-  storageClassName: longhorn
-  volumeMode: Filesystem
-  volumeName: diffusion-data-pv
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: diffusion-data-pv
-spec:
-  accessModes:
-  - ReadWriteOnce
-  capacity:
-    storage: 50Gi
-  csi:
-    driver: driver.longhorn.io
-    fsType: ext4
-    volumeAttributes:
-      baseImage: ""
-      fromBackup: ""
-      migratable: "false"
-      numberOfReplicas: "3"
-      staleReplicaTimeout: "30"
-    volumeHandle: diffusion-data-pvc
-  persistentVolumeReclaimPolicy: Delete
+      storage: 5Gi
   storageClassName: longhorn
   volumeMode: Filesystem
 ---
@@ -44,38 +20,14 @@ kind: PersistentVolumeClaim
 metadata:
   labels:
     app: diffusion-demo
-  name: diffusion-output-pvc
+  name: models
   namespace: default
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 15Gi
-  storageClassName: longhorn
-  volumeMode: Filesystem
-  volumeName: diffusion-output-pv
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: diffusion-output-pv
-spec:
-  accessModes:
-  - ReadWriteOnce
-  capacity:
-    storage: 15Gi
-  csi:
-    driver: driver.longhorn.io
-    fsType: ext4
-    volumeAttributes:
-      baseImage: ""
-      fromBackup: ""
-      migratable: "false"
-      numberOfReplicas: "3"
-      staleReplicaTimeout: "30"
-    volumeHandle: diffusion-output-pvc
-  persistentVolumeReclaimPolicy: Delete
+      storage: 50Gi
   storageClassName: longhorn
   volumeMode: Filesystem
 ---
@@ -97,7 +49,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: test
+  name: diffusion-demo
   namespace: default
 spec:
   rules:
@@ -136,7 +88,6 @@ spec:
     type: RollingUpdate
   template:
     metadata:
-      creationTimestamp: null
       labels:
         workload.user.cattle.io/workloadselector: apps.deployment-default-diffusion-demo
     spec:
@@ -156,18 +107,16 @@ spec:
         terminationMessagePolicy: File
         volumeMounts:
         - mountPath: /sd/models
-          name: models
+          name: diffusion-data-pv
         - mountPath: /sd/outputs
-          name: outputs
+          name: diffusion-outputs-pv
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       runtimeClassName: nvidia
-      schedulerName: default-scheduler
-      securityContext: {}
-      terminationGracePeriodSeconds: 30
       volumes:
-      - name: models
+      - name: diffusion-data-pv
         persistentVolumeClaim:
-      - name: outputs
+          claimName: models
+      - name: diffusion-outputs-pv
         persistentVolumeClaim:
-          claimName: diffusion-outputs-pvc
+          claimName: outputs
