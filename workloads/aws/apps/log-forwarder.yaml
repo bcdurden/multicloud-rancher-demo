@@ -21,6 +21,9 @@ spec:
   - clusterSelector:
       matchLabels:
         environment: prod
+  - clusterSelector:
+      matchLabels:
+        environment: hiperf
 
   paths:
   - "./gitops/apps/logging/promtail"
