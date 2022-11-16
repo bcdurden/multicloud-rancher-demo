@@ -60,4 +60,17 @@ targetCustomizations:
     matchLabels:
       environment: prod
       cluster_name: edge
+- name: hiperf-tyreek
+  helm:
+    values:
+      promtail:
+        config:
+          snippets:
+            pipelineStages:
+            - static_labels:
+                cluster: hiperf-tyreek
+  clusterSelector:
+    matchLabels:
+      environment: hiperf
+      cluster_name: tyreek
 
