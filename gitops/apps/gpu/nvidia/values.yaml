@@ -37,7 +37,7 @@ devicePlugin:
   args: null
   config:
     default: ''
-    name: ''
+    name: 'time-slicing-config'
   enabled: true
   env:
     - name: PASS_DEVICE_SPECS
