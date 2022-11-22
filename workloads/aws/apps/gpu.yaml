@@ -14,3 +14,4 @@ spec:
 
   paths:
   - "./gitops/apps/gpu/nvidia"
+  - "./gitops/apps/gpu/timeslicing-config"
