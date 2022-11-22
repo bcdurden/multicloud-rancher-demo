@@ -69,7 +69,7 @@ nodepools:
   endpoint: ""
   iamInstanceProfile: K8sUnrestrictedCloudProviderRole
   insecureTransport: false
-  instanceType: g5.xlarge
+  instanceType: g4dn.2xlarge
   region: us-gov-west-1
   createSecurityGroup: true
   securityGroups: []
@@ -116,7 +116,7 @@ nodepools:
   endpoint: ""
   iamInstanceProfile: K8sUnrestrictedCloudProviderRole
   insecureTransport: false
-  instanceType: g5.xlarge
+  instanceType: g4dn.2xlarge
   region: us-gov-west-1
   createSecurityGroup: true
   securityGroups: []
@@ -163,7 +163,7 @@ nodepools:
   endpoint: ""
   iamInstanceProfile: K8sUnrestrictedCloudProviderRole
   insecureTransport: false
-  instanceType: g5.2xlarge
+  instanceType: g4dn.2xlarge
   region: us-gov-west-1
   createSecurityGroup: true
   securityGroups: []
