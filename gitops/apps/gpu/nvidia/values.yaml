@@ -36,7 +36,7 @@ dcgmExporter:
 devicePlugin:
   args: null
   config:
-    default: ''
+    default: 'tesla-t4'
     name: 'time-slicing-config'
   enabled: true
   env:
