@@ -21,7 +21,7 @@ runcmd:
     - enable
     - --now
     - qemu-guest-agent.service
-  - curl -sfL https://get.rke2.io | INSTALL_RKE2_VERSION="v1.24.3+rke2r1" sh -
+  - curl -sfL https://get.rke2.io | INSTALL_RKE2_TYPE="agent" INSTALL_RKE2_VERSION="v1.24.3+rke2r1" sh -
   - systemctl enable rke2-server.service
   - systemctl start rke2-server.service
 ssh_authorized_keys:
