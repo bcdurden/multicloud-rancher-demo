@@ -1,0 +1,122 @@
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   labels:
+#     app: diffusion-demo
+#   name: outputs
+#   namespace: default
+# spec:
+#   accessModes:
+#   - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 5Gi
+#   storageClassName: longhorn
+#   volumeMode: Filesystem
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   labels:
+#     app: diffusion-demo
+#   name: models
+#   namespace: default
+# spec:
+#   accessModes:
+#   - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 50Gi
+#   storageClassName: longhorn
+#   volumeMode: Filesystem
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: diffusion-demo
+  namespace: default
+spec:
+  ports:
+  - name: backend
+    port: 80
+    protocol: TCP
+    targetPort: 8501
+  selector:
+    workload.user.cattle.io/workloadselector: apps.deployment-default-diffusion-demo
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: diffusion-demo
+  namespace: default
+spec:
+  rules:
+  - host: diffusion.sienarfleet.systems
+    http:
+      paths:
+      - backend:
+          service:
+            name: diffusion-demo
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: diffusion-demo
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  generation: 1
+  labels:
+    workload.user.cattle.io/workloadselector: apps.deployment-default-diffusion-demo
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      workload.user.cattle.io/workloadselector: apps.deployment-default-diffusion-demo
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        workload.user.cattle.io/workloadselector: apps.deployment-default-diffusion-demo
+    spec:
+      containers:
+      - image: multicloudbriandemo.azurecr.us/stable-diffusion-demo:latest      
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+        imagePullPolicy: IfNotPresent
+        name: container-0
+        ports:
+        - containerPort: 8501
+          name: diffusion-demo
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        # volumeMounts:
+        # - mountPath: /sd/models
+        #   name: diffusion-data-pv
+        # - mountPath: /sd/outputs
+        #   name: diffusion-outputs-pv
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      runtimeClassName: nvidia
+      # volumes:
+      # - name: diffusion-data-pv
+      #   persistentVolumeClaim:
+      #     claimName: models
+      # - name: diffusion-outputs-pv
+      #   persistentVolumeClaim:
+      #     claimName: outputs
