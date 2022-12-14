@@ -1,5 +1,5 @@
 cloudprovider: amazonec2
-cloudCredentialSecretName: cattle-global-data:cc-fltjp
+cloudCredentialSecretName: cattle-global-data:cc-fpznx
 cluster:
   annotations: {}
   labels:
