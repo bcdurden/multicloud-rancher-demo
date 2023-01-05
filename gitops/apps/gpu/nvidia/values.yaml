@@ -36,7 +36,7 @@ dcgmExporter:
 devicePlugin:
   args: null
   config:
-    default: 'tesla-t4'
+    default: 'nvidia-timeslice'
     name: 'time-slicing-config'
   enabled: true
   env:

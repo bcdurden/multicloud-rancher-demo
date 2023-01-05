@@ -52,7 +52,6 @@ resource "harvester_virtualmachine" "node-main" {
     type      = "noCloud"
     user_data    = <<EOT
       #cloud-config
-      package_update: true
       write_files:
       - path: /etc/rancher/rke2/config.yaml
         owner: root
@@ -79,21 +78,13 @@ resource "harvester_virtualmachine" "node-main" {
             ${var.rke2_registry}:
               endpoint:
                 - "https://${var.rke2_registry}"
-      packages:
-      - qemu-guest-agent
       runcmd:
       - - systemctl
         - enable
         - '--now'
         - qemu-guest-agent.service
-      - curl -sfL https://get.rke2.io | INSTALL_RKE2_VERSION=${var.rke2_version} sh -
-      - mkdir -p /var/lib/rancher/rke2/server/manifests/
-      - >-
-        wget https://kube-vip.io/manifests/rbac.yaml -O
-        /var/lib/rancher/rke2/server/manifests/kube-vip-rbac.yaml
-      - >-
-        curl -sL kube-vip.io/k3s |  vipAddress=${var.master_vip} vipInterface=${var.master_vip_interface} sh |
-        sudo tee /var/lib/rancher/rke2/server/manifests/vip.yaml
+      - INSTALL_RKE2_ARTIFACT_PATH=/var/lib/rancher/rke2-artifacts sh /var/lib/rancher/install.sh
+      - cat /var/lib/rancher/kube-vip-k3s |  vipAddress=${var.master_vip} vipInterface=${var.master_vip_interface} sh | sudo tee /var/lib/rancher/rke2/server/manifests/vip.yaml
       - systemctl enable rke2-server.service
       - systemctl start rke2-server.service
       ssh_authorized_keys: 

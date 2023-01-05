@@ -4,7 +4,7 @@ metadata:
   name: time-slicing-config
   namespace: gpu-operator
 data:
-    tesla-t4: |-
+    nvidia-timeslice: |-
         version: v1
         sharing:
           timeSlicing:

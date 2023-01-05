@@ -2,7 +2,7 @@ module "controlplane-nodes" {
   source = "./modules/controlplane-node"
 
   node_name_prefix = var.main_cluster_prefix
-  node_image_id = data.harvester_image.ubuntu2004.id
+  node_image_id = data.harvester_image.ubuntu2004-rke2.id
   vlan_id = data.harvester_network.services.id
   master_vip = var.master_vip
   ssh_key = tls_private_key.global_key.private_key_pem
@@ -23,7 +23,7 @@ module "worker" {
 
   worker_count = var.worker_count
   node_prefix = var.worker_prefix
-  node_image_id = data.harvester_image.ubuntu2004.id
+  node_image_id = data.harvester_image.ubuntu2004-rke2.id
   vlan_id = data.harvester_network.services.id
   master_vip = var.master_vip
   ssh_key = tls_private_key.global_key.private_key_pem

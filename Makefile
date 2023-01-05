@@ -58,7 +58,7 @@ push-images: check-tools
 	@${BOOTSTRAP_DIR}/airgap_images/push_carbide $(HARBOR_URL) $(HARBOR_USER) '$(HARBOR_PASSWORD)' $(IMAGES_FILE)
 
 # certificate targets
-certs: check-tools # needs CLOUDFLARE_TOKEN set and LOCAL_CLUSTER_NAME for non-default contexts
+certs: check-tools # needs CLOUD_TOKEN_FILE set and LOCAL_CLUSTER_NAME for non-default contexts
 	@printf "\n===>Making Certificates\n";
 	@kubectx $(LOCAL_CLUSTER_NAME)
 	@kubectl create secret generic clouddns-dns01-solver-svc-acct -n cert-manager --from-file=$(CLOUD_TOKEN_FILE) --dry-run=client -o yaml | kubectl apply -f -

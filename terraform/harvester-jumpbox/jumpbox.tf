@@ -24,7 +24,7 @@ resource "harvester_virtualmachine" "jumpbox" {
   disk {
     name       = "rootdisk"
     type       = "disk"
-    size       = "80Gi"
+    size       = "200Gi"
     bus        = "virtio"
     boot_order = 1
 
@@ -56,14 +56,14 @@ resource "harvester_virtualmachine" "jumpbox" {
       - wget https://github.com/sunny0826/kubecm/releases/download/v0.21.0/kubecm_v0.21.0_Linux_x86_64.tar.gz
       - tar xvf kubecm_v0.21.0_Linux_x86_64.tar.gz
       - install kubecm /usr/local/bin/kubecm
-      - rm LICENSE README kubecm kubecm_v0.21.0_Linux_x86_64.tar.gz
+      - rm LICENSE README.md kubecm kubecm_v0.21.0_Linux_x86_64.tar.gz
       - git clone https://github.com/ahmetb/kubectx /opt/kubectx
       - ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx
       - ln -s /opt/kubectx/kubens /usr/local/bin/kubens
       - wget -O- https://carvel.dev/install.sh > install.sh
       - sudo bash install.sh
       - rm install.sh
-      - wget -O- https://github.com/mikefarah/yq/releases/download/v4.30.1/yq_linux_amd64
+      - wget https://github.com/mikefarah/yq/releases/download/v4.30.1/yq_linux_amd64
       - sudo install yq_linux_amd64 /usr/local/bin/yq
       - rm yq_linux_amd64
 

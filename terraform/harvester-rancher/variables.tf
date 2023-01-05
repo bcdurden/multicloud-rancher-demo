@@ -13,13 +13,13 @@ variable "kubeconfig_filename" {
 variable "cert_manager_version" {
   type        = string
   description = "Version of cert-manager to install alongside Rancher (format: 0.0.0)"
-  default     = "1.7.3"
+  default     = "1.8.1"
 }
 
 variable "rancher_version" {
   type        = string
   description = "Rancher server version (format v0.0.0)"
-  default     = "2.6.7"
+  default     = "2.7.0"
 }
 variable "master_vip" {
     type = string
