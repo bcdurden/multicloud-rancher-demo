@@ -19,6 +19,6 @@ data "harvester_image" "ubuntu2004" {
   namespace = "default"
 }
 data "harvester_image" "ubuntu2004-rke2" {
-  name      = "ubuntu-2004-rke2"
+  name      = "image-fntq2"
   namespace = "default"
 }

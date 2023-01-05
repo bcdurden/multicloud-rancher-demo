@@ -31,5 +31,5 @@ module "worker" {
   rke2_registry = var.harbor_url
   disk_size = var.node_disk_size
   worker_node_core_count = var.worker_cpu_count
-  worker_node_memory_size = var.worker_plane_memory_size
+  worker_node_memory_size = var.worker_memory_size
 }

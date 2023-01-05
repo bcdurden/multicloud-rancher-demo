@@ -66,7 +66,7 @@ variable "worker_cpu_count" {
   type = string
   default = 2
 }
-variable "worker_plane_memory_size" {
+variable "worker_memory_size" {
   type = string
   default = "4Gi"
 }

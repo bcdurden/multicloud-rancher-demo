@@ -23,6 +23,8 @@ RANCHER_URL=rancher.home.$(BASE_URL)
 RANCHER_HA_MODE=false
 RANCHER_WORKER_COUNT=1
 RANCHER_NODE_SIZE="20Gi"
+RANCHER_HARVESTER_WORKER_CPU_COUNT=2
+RANCHER_HARVESTER_WORKER_MEMORY_SIZE="4Gi"
 
 # Harbor info
 HARBOR_URL=harbor.$(BASE_URL)
@@ -76,7 +78,7 @@ certs-export: check-tools
 	@kubectl get secret -n harbor harbor-prod-homelab-certificate -o yaml > harbor_cert.yaml
 	@kubectl get secret -n git gitea-prod-homelab-certificate -o yaml > gitea_cert.yaml
 	@kubectl get secret -n cattle-system tls-rancher-ingress -o yaml > rancher_cert.yaml
-	@kubectl get secret -n cattle-system tls-rancherhome-ingress -o yaml > rancherhome_cert.yaml
+	@kubectl get secret -n cattle-system tls-rancherhome-ingress -o yaml | yq e '.metadata.name = "tls-rancher-ingress"' > rancherhome_cert.yaml
 certs-import: check-tools
 	@printf "\n===>Importing Certificates\n";
 	@kubectx $(LOCAL_CLUSTER_NAME)
@@ -115,7 +117,7 @@ harvester-rancher: check-tools  # state stored in Harvester K8S
 	@printf "\n====> Terraforming RKE2 + Rancher\n";
 	@kubecm delete $(HARVESTER_RANCHER_CLUSTER_NAME) || true
 	@kubectx $(HARVESTER_CONTEXT)
-	$(MAKE) terraform-apply COMPONENT=harvester-rancher VARS='TF_VAR_harbor_url="$(HARBOR_URL)" TF_VAR_rancher_server_dns="$(RANCHER_URL)" TF_VAR_master_vip="$(RKE2_VIP)" TF_VAR_harbor_url="$(HARBOR_URL)" TF_VAR_worker_count=$(RANCHER_WORKER_COUNT) TF_VAR_control_plane_ha_mode=$(RANCHER_HA_MODE) TF_VAR_node_disk_size=$(RANCHER_NODE_SIZE)'
+	$(MAKE) terraform-apply COMPONENT=harvester-rancher VARS='TF_VAR_harbor_url="$(HARBOR_URL)" TF_VAR_rancher_server_dns="$(RANCHER_URL)" TF_VAR_master_vip="$(RKE2_VIP)" TF_VAR_harbor_url="$(HARBOR_URL)" TF_VAR_worker_count=$(RANCHER_WORKER_COUNT) TF_VAR_control_plane_ha_mode=$(RANCHER_HA_MODE) TF_VAR_node_disk_size=$(RANCHER_NODE_SIZE) TF_VAR_worker_cpu_count=$(RANCHER_HARVESTER_WORKER_CPU_COUNT) TF_VAR_worker_memory_size=$(RANCHER_HARVESTER_WORKER_MEMORY_SIZE)'
 	@cp ${TERRAFORM_DIR}/harvester-rancher/kube_config_server.yaml /tmp/$(HARVESTER_RANCHER_CLUSTER_NAME).yaml && kubecm add -c -f /tmp/$(HARVESTER_RANCHER_CLUSTER_NAME).yaml && rm /tmp/$(HARVESTER_RANCHER_CLUSTER_NAME).yaml
 	@kubectx $(HARVESTER_RANCHER_CLUSTER_NAME)
 	@kubectl apply -f $(HARVESTER_RANCHER_CERT_SECRET)

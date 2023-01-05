@@ -42,6 +42,7 @@ resource "harvester_virtualmachine" "jumpbox" {
       - qemu-guest-agent
       - make
       - jq
+      - libguestfs-tools
       runcmd:
       - - systemctl
         - enable
