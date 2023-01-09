@@ -1,11 +1,10 @@
 SHELL:=/bin/bash
 REQUIRED_BINARIES := kubectl cosign helm terraform kubectx kubecm ytt yq jq
 WORKING_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-ROOT_DIR := $(shell git rev-parse --show-toplevel)
 BOOTSTRAP_DIR := ${WORKING_DIR}/bootstrap
 TERRAFORM_DIR := ${WORKING_DIR}/terraform
-WORKLOAD_DIR := ${ROOT_DIR}/workloads
-GITOPS_DIR := ${ROOT_DIR}/gitops
+WORKLOAD_DIR := ${WORKING_DIR}/workloads
+GITOPS_DIR := ${WORKING_DIR}/gitops
 
 BASE_URL=sienarfleet.systems
 GITEA_URL=git.$(BASE_URL)
@@ -19,12 +18,14 @@ IMAGES_FILE=""
 
 # Rancher on Harvester Info
 RKE2_VIP=10.10.5.4
+RANCHER_TARGET_NETWORK=services
 RANCHER_URL=rancher.home.$(BASE_URL)
 RANCHER_HA_MODE=false
 RANCHER_WORKER_COUNT=1
 RANCHER_NODE_SIZE="20Gi"
 RANCHER_HARVESTER_WORKER_CPU_COUNT=2
 RANCHER_HARVESTER_WORKER_MEMORY_SIZE="4Gi"
+RKE2_IMAGE_NAME=ubuntu-rke2-airgap-harvester.img
 
 # Harbor info
 HARBOR_URL=harbor.$(BASE_URL)
@@ -117,7 +118,7 @@ harvester-rancher: check-tools  # state stored in Harvester K8S
 	@printf "\n====> Terraforming RKE2 + Rancher\n";
 	@kubecm delete $(HARVESTER_RANCHER_CLUSTER_NAME) || true
 	@kubectx $(HARVESTER_CONTEXT)
-	$(MAKE) terraform-apply COMPONENT=harvester-rancher VARS='TF_VAR_harbor_url="$(HARBOR_URL)" TF_VAR_rancher_server_dns="$(RANCHER_URL)" TF_VAR_master_vip="$(RKE2_VIP)" TF_VAR_harbor_url="$(HARBOR_URL)" TF_VAR_worker_count=$(RANCHER_WORKER_COUNT) TF_VAR_control_plane_ha_mode=$(RANCHER_HA_MODE) TF_VAR_node_disk_size=$(RANCHER_NODE_SIZE) TF_VAR_worker_cpu_count=$(RANCHER_HARVESTER_WORKER_CPU_COUNT) TF_VAR_worker_memory_size=$(RANCHER_HARVESTER_WORKER_MEMORY_SIZE)'
+	$(MAKE) terraform COMPONENT=harvester-rancher VARS='TF_VAR_harbor_url="$(HARBOR_URL)" TF_VAR_rancher_server_dns="$(RANCHER_URL)" TF_VAR_master_vip="$(RKE2_VIP)" TF_VAR_harbor_url="$(HARBOR_URL)" TF_VAR_worker_count=$(RANCHER_WORKER_COUNT) TF_VAR_control_plane_ha_mode=$(RANCHER_HA_MODE) TF_VAR_node_disk_size=$(RANCHER_NODE_SIZE) TF_VAR_worker_cpu_count=$(RANCHER_HARVESTER_WORKER_CPU_COUNT) TF_VAR_worker_memory_size=$(RANCHER_HARVESTER_WORKER_MEMORY_SIZE) TF_VAR_target_network_name=$(RANCHER_TARGET_NETWORK) TF_VAR_harvester_rke2_image_name=$(shell kubectl get virtualmachineimage -o yaml | yq e '.items[]|select(.spec.displayName=="$(RKE2_IMAGE_NAME)")' - | yq e '.metadata.name' -)'
 	@cp ${TERRAFORM_DIR}/harvester-rancher/kube_config_server.yaml /tmp/$(HARVESTER_RANCHER_CLUSTER_NAME).yaml && kubecm add -c -f /tmp/$(HARVESTER_RANCHER_CLUSTER_NAME).yaml && rm /tmp/$(HARVESTER_RANCHER_CLUSTER_NAME).yaml
 	@kubectx $(HARVESTER_RANCHER_CLUSTER_NAME)
 	@kubectl apply -f $(HARVESTER_RANCHER_CERT_SECRET)

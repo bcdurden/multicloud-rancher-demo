@@ -70,3 +70,9 @@ variable "worker_memory_size" {
   type = string
   default = "4Gi"
 }
+variable "harvester_rke2_image_name" {
+  type = string
+}
+variable "target_network_name" {
+  type = string
+}
