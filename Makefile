@@ -97,7 +97,7 @@ terraform-apply: check-tools
 terraform-value: check-tools
 	@terraform -chdir=${TERRAFORM_DIR}/$(COMPONENT) output -json | jq -r '.jumpbox_ssh_key.value'
 terraform-destroy: check-tools
-	@terraform -chdir=${TERRAFORM_DIR}/$(COMPONENT) destroy
+	@$(VARS) terraform -chdir=${TERRAFORM_DIR}/$(COMPONENT) destroy
 
 rancher: check-tools  # state stored in S3
 	@printf "\n====> Terraforming RKE2 + Rancher\n";
@@ -125,7 +125,7 @@ harvester-rancher: check-tools  # state stored in Harvester K8S
 harvester-rancher-destroy: check-tools
 	@printf "\n====> Destroying RKE2 + Rancher\n";
 	@kubectx $(HARVESTER_CONTEXT)
-	$(MAKE) terraform-destroy COMPONENT=harvester-rancher
+	$(MAKE) terraform-destroy COMPONENT=harvester-rancher VARS='TF_VAR_target_network_name=$(RANCHER_TARGET_NETWORK) TF_VAR_harvester_rke2_image_name=$(shell kubectl get virtualmachineimage -o yaml | yq e '.items[]|select(.spec.displayName=="$(RKE2_IMAGE_NAME)")' - | yq e '.metadata.name' -)'
 	@kubecm delete $(HARVESTER_RANCHER_CLUSTER_NAME) || true
 
 jumpbox: check-tools
