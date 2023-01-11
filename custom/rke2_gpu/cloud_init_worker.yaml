@@ -12,16 +12,12 @@ write_files:
     127.0.0.1 localhost
     127.0.0.1 rke2-gpu-cluster-worker-0
     10.10.5.4 rke2-gpu-cluster-cp
-packages:
-  - qemu-guest-agent
-  - nvidia-driver-520
-  - nvidia-cuda-toolkit
 runcmd:
   - - systemctl
     - enable
     - --now
     - qemu-guest-agent.service
-  - curl -sfL https://get.rke2.io | INSTALL_RKE2_TYPE="agent" INSTALL_RKE2_VERSION="v1.24.3+rke2r1" sh -
+  - INSTALL_RKE2_TYPE="agent" INSTALL_RKE2_ARTIFACT_PATH=/var/lib/rancher/rke2-artifacts sh /var/lib/rancher/install.sh
   - systemctl enable rke2-server.service
   - systemctl start rke2-server.service
 ssh_authorized_keys:
